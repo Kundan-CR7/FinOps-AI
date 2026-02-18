@@ -1,59 +1,61 @@
-graph TB
-    subgraph AI Tax Compliance System
+# Use Case Diagram
 
-        %% Ingestion Module
-        UC1["Upload Invoices"]
-        UC2["Sync Bank Statement"]
-        UC3["OCR Data Extraction"]
-        UC4["Validate Data Quality"]
+```mermaid
+usecaseDiagram
+    actor "Business Owner" as Owner
+    actor "System Admin" as Admin
+    actor "Govt Portal (GSTN)" as Govt
 
-        %% Core Processing Engine
-        UC5["Reconcile Transactions"]
-        UC6["Identify Tax Codes"]
-        UC7["Calculate Tax Liability"]
-        UC8["Detect Anomalies"]
-        UC9["Flag Suspicious Vendor"]
+    package "Ingestion Module" {
+        usecase "Upload Invoices" as UC1
+        usecase "Sync Bank Statement" as UC2
+        usecase "OCR Data Extraction" as UC3
+        usecase "Validate Data Quality" as UC4
+    }
 
-        %% Reporting & Filing
-        UC10["Generate GSTR-1 Report"]
-        UC11["Generate GSTR-3B Report"]
-        UC12["Approve & File Return"]
-        UC13["View Audit Logs"]
+    package "Core Processing Engine" {
+        usecase "Reconcile Transactions" as UC5
+        usecase "Identify Tax Codes" as UC6
+        usecase "Calculate Tax Liability" as UC7
+        usecase "Detect Anomalies" as UC8
+        usecase "Flag Suspicious Vendor" as UC9
+    }
 
-        %% Admin Panel
-        UC14["Update Tax Rules"]
-        UC15["Manage User Access"]
-    end
+    package "Reporting & Filing" {
+        usecase "Generate GSTR-1 Report" as UC10
+        usecase "Generate GSTR-3B Report" as UC11
+        usecase "Approve & File Return" as UC12
+        usecase "View Audit Logs" as UC13
+    }
 
-    Owner((Business Owner))
-    Admin((System Admin))
-    Govt((Govt Portal - GSTN))
+    package "Admin Panel" {
+        usecase "Update Tax Rules" as UC14
+        usecase "Manage User Access" as UC15
+    }
 
-    %% Owner Actions
+    %% Relationships - Ingestion
     Owner --> UC1
     Owner --> UC2
+    UC1 ..> UC3 : <<include>>
+    UC3 ..> UC4 : <<include>>
+    UC4 --> UC5 : "Triggers"
+
+    %% Relationships - Core Logic
+    UC5 ..> UC6 : <<include>>
+    UC6 ..> UC7 : <<include>>
+    
+    %% Exception Handling (The "Smart" Part)
+    UC7 <.. UC8 : <<extend>>
+    UC8 <.. UC9 : <<extend>>
+
+    %% Reporting
     Owner --> UC12
+    UC12 ..> UC10 : <<include>>
+    UC12 ..> UC11 : <<include>>
+    UC12 --> Govt : "API Submission"
 
-    %% Ingestion Flow
-    UC1 -.->|includes| UC3
-    UC3 -.->|includes| UC4
-    UC4 -->|triggers| UC5
-
-    %% Core Logic Flow
-    UC5 -.->|includes| UC6
-    UC6 -.->|includes| UC7
-
-    %% Smart Exception Flow
-    UC7 -.->|extended by| UC8
-    UC8 -.->|extended by| UC9
-
-    %% Reporting Flow
-    UC12 -.->|includes| UC10
-    UC12 -.->|includes| UC11
-    UC12 -->|API Submission| Govt
-
-    %% Admin Actions
+    %% Admin Tasks
     Admin --> UC14
     Admin --> UC15
+    UC14 --> UC7 : "Updates Logic"
     Admin --> UC13
-    UC14 -->|updates logic| UC7
