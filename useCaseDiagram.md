@@ -1,7 +1,7 @@
 # Use Case Diagram
 
 ```mermaid
-graph TD
+graph LR
     %% Actors represented as hexagons or special shapes
     User[("Business Owner")]
     Admin[("System Admin")]
