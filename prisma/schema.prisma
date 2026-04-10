@@ -4,10 +4,136 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
+
+model User{
+  id            String @id @default(uuid())
+  email         String @unique
+  passwordHash  String @map("password_hash")
+  role          String
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  isActive      Boolean @default(true) @map("is_active")
+
+  //Relations
+  invoices       Invoice[]
+  bankStatements BankStatement[]
+  alerts         Alert[]
+  auditLogs       AuditLog[]
+  @@map("users")
+}
+
+model Invoice{
+  id String @id @default(uuid())
+  userId String @map("user_id")
+  vendorGstin String @map("vendor_gstin")
+  totalAmount Decimal @map("total_amount")
+  status String
+  invoiceDate DateTime @map("invoice_date")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  //Relations
+  user User @relation(fields: [userId],references: [id])
+  items InvoiceItem[]
+  alerts Alert[]
+  reconciliations Reconciliation[]
+  @@map("invoices")
+}
+
+model InvoiceItem{
+  id String @id @default(uuid())
+  invoiceId String @map("invoice_id")
+  description String
+  hsnCode String @map("hsn_code")
+  amount Decimal
+  gstRate Decimal @map("gst_rate")
+  invoice Invoice @relation(fields: [invoiceId],references: [id])
+
+  @@map("invoice_items")
+}
+
+model BankStatement{
+  id String @id @default(uuid())
+  userId String @map("user_id")
+  accountNumber String @map("account_number")
+  periodStart DateTime @map("period_start")
+  periodEnd DateTime @map("period_end")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId],references: [id])
+  transactions BankTransaction[]
+
+  @@map("bank_statements")
+}
+
+model BankTransaction{
+  id String @id @default(uuid())
+  statementId String @map("statement_id")
+  transactionDate DateTime @map("transaction_date")
+  amount Decimal
+  type String
+  narration String?
+
+  statement BankStatement @relation(fields: [statementId],references: [id],onDelete: Cascade)
+  reconciliations Reconciliation[]
+  @@map("bank_transactions")
+}
+
+model Reconciliation{
+  id String @id @default(uuid())
+  invoiceId String? @map("invoice_id")
+  transactionId String? @map("transaction_id")
+  status String
+  matchedAt DateTime @default(now()) @map("matched_at")
+
+  invoice Invoice? @relation(fields: [invoiceId],references: [id])
+  transaction BankTransaction? @relation(fields: [transactionId],references: [id])
+
+  @@map("reconciliations")
+}
+
+model Alert {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  invoiceId  String?  @map("invoice_id") // Optional: An alert might be about a bank sync, not just an invoice
+  severity   String   // e.g., 'HIGH', 'MEDIUM', 'LOW'
+  message    String
+  isResolved Boolean  @default(false) @map("is_resolved")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user    User     @relation(fields: [userId], references: [id])
+  invoice Invoice? @relation(fields: [invoiceId], references: [id])
+
+  @@map("alerts")
+}
+model TaxRule {
+  id              String    @id @default(uuid())
+  hsnCode         String    @map("hsn_code")
+  gstRate         Decimal   @map("gst_rate")
+  ruleDescription String    @map("rule_description")
+  effectiveFrom   DateTime  @map("effective_from")
+  effectiveTo     DateTime? @map("effective_to") // Optional: null means it is currently active indefinitely
+  isActive        Boolean   @default(true) @map("is_active")
+
+  @@map("tax_rules")
+}
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  entityType String   @map("entity_type") // e.g., 'INVOICE', 'BANK_STATEMENT'
+  entityId   String   @map("entity_id")
+  action     String   // e.g., 'CREATED', 'DELETED', 'RECONCILED'
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
