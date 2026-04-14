@@ -11,9 +11,9 @@ export class TransactionService{
 
     public async processNewTransaction(payload: {id: string, amount: number, type: 'CREDIT' | 'DEBIT'}): Promise<Transaction>{
         const transaction = new Transaction(payload.id, payload.amount, payload.type)
-        const isFraud = false  //Mocking an external call
+        const isFraud = false  //Mocking an external call (eg some model)
         if(isFraud){
-            transaction.flagAnomaly("Failed externam fraud check")
+            transaction.flagAnomaly("Failed external fraud check")
         }
 
         await this.transactionRepo.save(transaction)

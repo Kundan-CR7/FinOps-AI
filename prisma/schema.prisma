@@ -80,6 +80,7 @@ model BankTransaction{
   amount Decimal
   type String
   narration String?
+  status String @default("PENDING")
 
   statement BankStatement @relation(fields: [statementId],references: [id],onDelete: Cascade)
   reconciliations Reconciliation[]

@@ -1,4 +1,3 @@
-import { stat } from "node:fs";
 import { FinancialDocument, DocumentStatus } from "./FinancialDocument";
 import { InvoiceItem } from "./InvoiceItem";
 

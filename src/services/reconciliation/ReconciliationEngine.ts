@@ -25,7 +25,7 @@ export class ReconciliationEngine{
             }
         }
         
-        invoice.flagAsAnomaly()    //no match is found 
+        invoice.flagAsAnomaly    //no match is found 
         return false
     }
 }
