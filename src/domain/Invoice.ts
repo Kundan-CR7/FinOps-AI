@@ -52,6 +52,10 @@ export class Invoice extends FinancialDocument{
     }
 
     public getItems(): ReadonlyArray<InvoiceItem>{
-        return this.items
+        return [...this.items]
+    }
+
+    public getTotalAmount(): number {
+        return this.totalAmount
     }
 }
