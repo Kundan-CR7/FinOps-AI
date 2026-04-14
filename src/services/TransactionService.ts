@@ -9,8 +9,8 @@ export class TransactionService{
         this.transactionRepo = transactionRepo
     }
 
-    public async processNewTransaction(payload: {id: string, amount: number, type: 'CREDIT' | 'DEBIT'}): Promise<Transaction>{
-        const transaction = new Transaction(payload.id, payload.amount, payload.type)
+    public async processNewTransaction(payload: {id: string,statementId: string ,amount: number, type: 'CREDIT' | 'DEBIT'}): Promise<Transaction>{
+        const transaction = new Transaction(payload.id,payload.statementId ,payload.amount, payload.type)
         const isFraud = false  //Mocking an external call (eg some model)
         if(isFraud){
             transaction.flagAnomaly("Failed external fraud check")
