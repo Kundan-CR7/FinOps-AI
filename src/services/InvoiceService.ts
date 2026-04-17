@@ -1,16 +1,16 @@
 import { promises } from "node:dns";
 import { Invoice } from "../domain/Invoice";
 import { InvoiceItem } from "../domain/InvoiceItem";
-import { PrismaInvoiceRepository } from "../repositories/PrismaInvoiceRepository";
+import { IInvoiceRepository } from "../repositories/IInvoiceRepository";
 
-export class InvoiceService{
-    invoiceRepo: PrismaInvoiceRepository
+export class InvoiceService {
+    private readonly invoiceRepo: IInvoiceRepository
 
-    constructor(invoiceRepo: PrismaInvoiceRepository){
+    constructor(invoiceRepo: IInvoiceRepository) {
         this.invoiceRepo = invoiceRepo
     }
 
-    public async processNewInvoice(payload: any): Promise<Invoice>{
+    public async processNewInvoice(payload: any): Promise<Invoice> {
         const invoice = new Invoice(
             payload.id,
             payload.userId,
@@ -19,7 +19,7 @@ export class InvoiceService{
             new Date(payload.invoiceDate)
         )
 
-        for (const itemPayload of payload.items){
+        for (const itemPayload of payload.items) {
             const item = new InvoiceItem(
                 itemPayload.id,
                 itemPayload.description,
@@ -31,6 +31,7 @@ export class InvoiceService{
         }
 
         invoice.process()
+        await this.invoiceRepo.save(invoice)
         return invoice
     }
 }

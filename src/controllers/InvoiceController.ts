@@ -1,28 +1,28 @@
-import { Request,Response } from "express";
+import { Request, Response } from "express";
 import { InvoiceService } from "../services/InvoiceService";
 
-export class InvoiceController{
+export class InvoiceController {
     private invoiceService: InvoiceService
 
-    constructor(invoiceService: InvoiceService){
+    constructor(invoiceService: InvoiceService) {
         this.invoiceService = invoiceService
     }
 
-    public async upload(req: Request, res: Response): Promise<void>{
-        try{
+    public async upload(req: Request, res: Response): Promise<void> {
+        try {
             const invoice = await this.invoiceService.processNewInvoice(req.body)
             res.status(201).json({
                 message: "Invoice processed successfully",
-                data :{
-                    id : invoice.getId(),
-                    status : invoice.getStatus(),
+                data: {
+                    id: invoice.getId(),
+                    status: invoice.getStatus(),
                     isFlagged: invoice.getStatus() === "FLAGGED"
                 }
             })
-        }catch(error: any){
+        } catch (error: any) {
             res.status(400).json({
                 success: false,
-                error : error.message
+                error: error.message
             })
         }
     }

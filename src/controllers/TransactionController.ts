@@ -27,6 +27,8 @@ export class TransactionController{
                     status : transaction.getStatus()
                 }
             })
+        }catch(error: any){
+            res.status(500).json({ error: error.message})
         }
     }
 }
