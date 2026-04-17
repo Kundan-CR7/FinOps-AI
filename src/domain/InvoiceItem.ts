@@ -26,4 +26,6 @@ export class InvoiceItem{
     public getAmount(): number { return this.amount; }
     public getGstRate(): number { return this.gstRate; }
     public getHsnCode(): string { return this.hsnCode; }
+    public getId(): string { return this.id; }
+    public getDescription(): string { return this.description; }
 }

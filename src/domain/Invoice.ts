@@ -2,18 +2,20 @@ import { FinancialDocument, DocumentStatus } from "./FinancialDocument";
 import { InvoiceItem } from "./InvoiceItem";
 
 export class Invoice extends FinancialDocument{
+    private readonly userId: string
     private readonly vendorGstin: string
     private readonly totalAmount: number
     private readonly invoiceDate: Date
     private items: InvoiceItem[]
 
-    constructor(id: string, vendorGstin: string, totalAmount: number, invoiceDate:Date, status?: DocumentStatus){
+    constructor(id: string, userId: string, vendorGstin: string, totalAmount: number, invoiceDate:Date, status?: DocumentStatus){
         super(id,status)
 
         if(totalAmount <=0){
             throw new Error("Invoice total must be strictly positive.");
             
         }
+        this.userId = userId
         this.vendorGstin = vendorGstin
         this.totalAmount = totalAmount
         this.invoiceDate = invoiceDate
@@ -54,7 +56,9 @@ export class Invoice extends FinancialDocument{
         return [...this.items]
     }
 
-    public getTotalAmount(): number {
-        return this.totalAmount
-    }
+    public getUserId(): string { return this.userId}
+    public getTotalAmount(): number { return this.totalAmount }
+    public getVendorGstin(): string { return this.vendorGstin }
+    public getInvoiceDate(): Date { return this.invoiceDate }
+
 }
