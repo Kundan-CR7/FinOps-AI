@@ -3,6 +3,7 @@ import express from "express"
 import transactionRoutes from "./routes/transactionRoutes"
 import invoiceRoutes from "./routes/invoiceRoutes"
 
+console.log("DB URL:", process.env.DATABASE_URL)
 const app = express()
 app.use(express.json())
 
