@@ -1,0 +1,20 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const PrismaTransactionRepository_1 = require("../repositories/PrismaTransactionRepository");
+const PrismaInvoiceRepository_1 = require("../repositories/PrismaInvoiceRepository");
+const ExactlyMatchStrategy_1 = require("../services/reconciliation/ExactlyMatchStrategy");
+const SumMatchStrategy_1 = require("../services/reconciliation/SumMatchStrategy");
+const ReconciliationEngine_1 = require("../services/reconciliation/ReconciliationEngine");
+const ReconciliationController_1 = require("../controllers/ReconciliationController");
+const authMiddleware_1 = require("../middleware/authMiddleware");
+const router = (0, express_1.Router)();
+//Dependency Injection
+const transactionRepo = new PrismaTransactionRepository_1.PrismaTransactionRepository();
+const invoiceRepo = new PrismaInvoiceRepository_1.PrismaInvoiceRepository();
+const strategies = [new ExactlyMatchStrategy_1.ExactMatchStrategy(), new SumMatchStrategy_1.SumMatchStrategy()];
+const engine = new ReconciliationEngine_1.ReconciliationEngine(transactionRepo, strategies);
+const reconciliationController = new ReconciliationController_1.ReconciliationController(engine, invoiceRepo, transactionRepo);
+router.use(authMiddleware_1.requireAuth);
+router.post("/run", (req, res) => (reconciliationController.runReconciliation(req, res)));
+exports.default = router;

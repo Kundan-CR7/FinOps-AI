@@ -4,6 +4,7 @@ import cors from "cors"
 import transactionRoutes from "./routes/transactionRoutes"
 import invoiceRoutes from "./routes/invoiceRoutes"
 import reconciliationRoutes from "./routes/reconciliationRoutes"
+import authRoutes from "./routes/authRoutes"
 
 console.log("DB URL:", process.env.DATABASE_URL)
 const app = express()
@@ -24,6 +25,7 @@ app.use(cors({
 app.use("/api/transactions", transactionRoutes)
 app.use("/api/invoices", invoiceRoutes)
 app.use("/api/reconcile", reconciliationRoutes)
+app.use("/api/auth", authRoutes)
 
 
 const PORT = process.env.PORT || 3000

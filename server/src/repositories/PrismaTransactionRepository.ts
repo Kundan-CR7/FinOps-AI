@@ -16,7 +16,8 @@ export class PrismaTransactionRepository implements ITransactionRepository {
                 amount: transaction.getAmount(),
                 type: transaction.getType(),
                 status: transaction.getStatus(),
-                transactionDate: new Date()
+                transactionDate: transaction.getTransactionDate(),
+                narration: transaction.getNarration()
             }
         })
     }
@@ -39,15 +40,30 @@ export class PrismaTransactionRepository implements ITransactionRepository {
         return rawDbRecord.map(record => this.mapToDomain(record))
     }
 
+    public async findByNarration(userId: string, narration: string): Promise<Transaction[]> {
+        const rawDbRecord = await prisma.bankTransaction.findMany({
+            where: { 
+                narration: narration,
+                statement: {
+                    userId: userId
+                }
+            }
+        })
+
+        return rawDbRecord.map(record => this.mapToDomain(record))
+    }
+
     private mapToDomain(raw: any): Transaction {
         const transaction = new Transaction(
             raw.id,
             raw.statementId,
             Number(raw.amount),
-            raw.type
+            raw.type,
+            raw.transactionDate,
+            raw.narration
         )
 
-        if (raw.status === "RECONCILED") {
+        if (raw.status === "RECONCILED" || raw.status === "MATCHED") {
             transaction.markAsReconciled()
         } else if (raw.status === "FLAGGED") {
             transaction.flagAnomaly("Restored from DB")

@@ -1,0 +1,25 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const multer_1 = __importDefault(require("multer"));
+const InvoiceController_1 = require("../controllers/InvoiceController");
+const InvoiceService_1 = require("../services/InvoiceService");
+const PrismaInvoiceRepository_1 = require("../repositories/PrismaInvoiceRepository");
+const DocumentExtractionService_1 = require("../services/DocumentExtractionService");
+const ExtractionController_1 = require("../controllers/ExtractionController");
+const authMiddleware_1 = require("../middleware/authMiddleware");
+const router = (0, express_1.Router)();
+const upload = (0, multer_1.default)({ storage: multer_1.default.memoryStorage() });
+const invoiceRepo = new PrismaInvoiceRepository_1.PrismaInvoiceRepository();
+const invoiceService = new InvoiceService_1.InvoiceService(invoiceRepo);
+const invoiceController = new InvoiceController_1.InvoiceController(invoiceService);
+const extractionService = new DocumentExtractionService_1.DocumentExtractionService();
+const extractionController = new ExtractionController_1.ExtractionController(extractionService, invoiceService);
+router.use(authMiddleware_1.requireAuth);
+router.post("/upload", (req, res) => (invoiceController.upload(req, res)));
+router.get("/", (req, res) => (invoiceController.getAll(req, res)));
+router.post("/extract", upload.single("document"), (req, res) => (extractionController.extract(req, res)));
+exports.default = router;

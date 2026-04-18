@@ -45,4 +45,19 @@ export class PrismaInvoiceRepository implements IInvoiceRepository {
         }
         return invoice
     }
+    
+    public async findByUser(userId: string): Promise<Invoice[]> {
+        const raws = await prisma.invoice.findMany({
+            where : { userId },
+            include : { items: true },
+            orderBy: { createdAt: 'desc' }
+        })
+        return raws.map((raw) => {
+            const invoice = new Invoice(raw.id, raw.userId, raw.vendorGstin, Number(raw.totalAmount), raw.invoiceDate, raw.status as DocumentStatus)
+            for (const item of raw.items){
+                invoice.addItem(new InvoiceItem(item.id, item.description, item.hsnCode, Number(item.amount), Number(item.gstRate)))
+            }
+            return invoice;
+        })
+    }
 }

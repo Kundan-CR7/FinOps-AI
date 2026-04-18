@@ -61,4 +61,7 @@ export class Invoice extends FinancialDocument{
     public getVendorGstin(): string { return this.vendorGstin }
     public getInvoiceDate(): Date { return this.invoiceDate }
 
+    public markAsPaid(): void {
+        this.status = "PAID"
+    }
 }

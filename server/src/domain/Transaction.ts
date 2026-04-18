@@ -1,5 +1,5 @@
 type TransactionType = "CREDIT" | "DEBIT"
-type TransactionStatus = "PENDING" | "RECONCILED" | "FLAGGED"
+type TransactionStatus = "PENDING" | "RECONCILED" | "FLAGGED" | "MATCHED"
 
 export class Transaction{
     private readonly id: string;
@@ -8,8 +8,10 @@ export class Transaction{
     private type: TransactionType
     private status: TransactionStatus
     private anomalyReason: string | null
+    private transactionDate: Date
+    private narration: string | null
 
-    constructor(id: string,statementId: string, amount: number, type: TransactionType){
+    constructor(id: string,statementId: string, amount: number, type: TransactionType, transactionDate: Date = new Date(), narration: string | null = null){
         if(amount <= 0){
             throw new Error("Transaction amount must be strictly positive.")
         }
@@ -19,6 +21,8 @@ export class Transaction{
         this.type = type 
         this.status = "PENDING"
         this.anomalyReason = null
+        this.transactionDate = transactionDate
+        this.narration = narration
     }
 
     //Behaviour: Mutating state through strictly controlled methods
@@ -26,7 +30,7 @@ export class Transaction{
         if(this.status === "FLAGGED"){
             throw new Error("Cannot reconcile a flagged transaction without manual review.")
         }
-        this.status = "RECONCILED"
+        this.status = "MATCHED"
     }
 
     flagAnomaly(reason: string): void{
@@ -52,5 +56,13 @@ export class Transaction{
 
     getType(): TransactionType{
         return this.type
+    }
+
+    getTransactionDate(): Date{
+        return this.transactionDate
+    }
+
+    getNarration(): string | null{
+        return this.narration
     }
 }

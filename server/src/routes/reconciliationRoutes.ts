@@ -2,8 +2,11 @@ import { Router } from "express";
 import { PrismaTransactionRepository } from "../repositories/PrismaTransactionRepository";
 import { PrismaInvoiceRepository } from "../repositories/PrismaInvoiceRepository";
 import { ExactMatchStrategy } from "../services/reconciliation/ExactlyMatchStrategy";
+import { SumMatchStrategy } from "../services/reconciliation/SumMatchStrategy";
 import { ReconciliationEngine } from "../services/reconciliation/ReconciliationEngine";
 import { ReconciliationController } from "../controllers/ReconciliationController";
+
+import { requireAuth } from "../middleware/authMiddleware";
 
 const router = Router()
 
@@ -11,12 +14,14 @@ const router = Router()
 const transactionRepo = new PrismaTransactionRepository()
 const invoiceRepo = new PrismaInvoiceRepository()
 
-const strategies = [new ExactMatchStrategy()]
+const strategies = [new ExactMatchStrategy(), new SumMatchStrategy()]
 const engine = new ReconciliationEngine(transactionRepo, strategies)
 const reconciliationController = new ReconciliationController(engine, invoiceRepo, transactionRepo)
 
-router.post("/run",(req,res) => (
-    reconciliationController.runReconciliation(req,res)
+router.use(requireAuth);
+
+router.post("/run", (req, res) => (
+    reconciliationController.runReconciliation(req, res)
 ))
 
 export default router

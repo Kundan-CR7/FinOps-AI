@@ -1,6 +1,6 @@
 import { stat } from "node:fs"
 
-export type DocumentStatus = "PENDING" | "VERIFIED" | "FLAGGED" | "RECONCILED"
+export type DocumentStatus = "PENDING" | "VERIFIED" | "FLAGGED" | "RECONCILED" | "EXTRACTED" | "PAID"
 
 export abstract class FinancialDocument {
     protected readonly id: string
