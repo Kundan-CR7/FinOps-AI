@@ -1,12 +1,25 @@
 import "dotenv/config"
 import express from "express"
+import cors from "cors"
 import transactionRoutes from "./routes/transactionRoutes"
 import invoiceRoutes from "./routes/invoiceRoutes"
 import reconciliationRoutes from "./routes/reconciliationRoutes"
 
 console.log("DB URL:", process.env.DATABASE_URL)
 const app = express()
-app.use(express.json())
+
+// Skip JSON body parsing for multipart requests so multer can read the stream
+app.use((req, res, next) => {
+    if (req.headers['content-type']?.startsWith('multipart/form-data')) {
+        return next()
+    }
+    express.json()(req, res, next)
+})
+
+app.use(cors({
+    origin: "http://localhost:5173",
+    methods: ["GET","POST"]
+}))
 
 app.use("/api/transactions", transactionRoutes)
 app.use("/api/invoices", invoiceRoutes)
