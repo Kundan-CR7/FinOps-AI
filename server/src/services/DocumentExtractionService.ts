@@ -9,6 +9,7 @@ if(!apiKey){
 
 export class DocumentExtractionService{
     public async extractInvoiceData(fileBuffer: Buffer, mimeType: string):Promise<any>{
+        console.log("Text extraction initiated!")
         const model = genAI.getGenerativeModel({
             model : "gemini-2.5-flash",
             generationConfig: {responseMimeType: "application/json"}
@@ -46,6 +47,7 @@ export class DocumentExtractionService{
             const responseText = result.response.text()
 
             const extractedData = JSON.parse(responseText)
+            console.log(extractedData)
             return extractedData
         }catch(error){
             console.log("AI Extraction Failed:",error)

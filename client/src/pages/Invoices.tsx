@@ -1,13 +1,22 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { finopsApi } from '../services/finopsApi';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { UploadCloud, CheckCircle2, RefreshCcw } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { UploadCloud, CheckCircle2, RefreshCcw, ChevronDown, ChevronUp } from 'lucide-react';
+
+const statusConfig: Record<string, { bg: string; text: string; border: string }> = {
+  EXTRACTED: { bg: 'bg-[#0099ff]/10', text: 'text-[#0099ff]', border: 'border-[#0099ff]/20' },
+  PENDING: { bg: 'bg-white/5', text: 'text-zinc-400', border: 'border-white/10' },
+  VERIFIED: { bg: 'bg-cyan-500/10', text: 'text-cyan-400', border: 'border-cyan-500/20' },
+  FLAGGED: { bg: 'bg-rose-500/10', text: 'text-rose-400', border: 'border-rose-500/20' },
+  PAID: { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/20' },
+  RECONCILED: { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/20' },
+};
 
 export const Invoices = () => {
   const [isUploadModalOpen, setUploadModalOpen] = useState(false);
+  const [expandedRow, setExpandedRow] = useState<string | null>(null);
   
   const { data: invoices, isLoading } = useQuery({
     queryKey: ['invoices'],
@@ -15,54 +24,84 @@ export const Invoices = () => {
   });
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-6">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">Invoices</h1>
-          <p className="text-slate-500 text-sm mt-1">Manage and extract data from vendor bills.</p>
+          <h1 className="text-2xl font-semibold text-white tracking-tight">Invoices</h1>
+          <p className="text-zinc-400 text-sm mt-1">Manage and extract data from vendor bills.</p>
         </div>
-        <Button onClick={() => setUploadModalOpen(true)} className="gap-2">
+        <Button onClick={() => setUploadModalOpen(true)} className="gap-2 shrink-0 border-white/10" variant="outline">
           <UploadCloud className="w-4 h-4" /> AI Upload Invoice
         </Button>
       </div>
 
-      <Card>
+      <Card className="overflow-hidden p-0">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200">
-              <tr>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Invoice ID</th>
-                <th className="px-6 py-4">Vendor GSTIN</th>
-                <th className="px-6 py-4">Date</th>
-                <th className="px-6 py-4 text-right">Amount</th>
+            <thead>
+              <tr className="border-b border-white/5 bg-white/[0.02]">
+                <th className="px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">Invoice ID</th>
+                <th className="px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">Vendor GSTIN</th>
+                <th className="px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">Date</th>
+                <th className="px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider text-right">Amount</th>
+                <th className="px-6 py-4 w-12"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-white/5 bg-transparent">
               {isLoading ? (
-                <tr><td colSpan={5} className="py-8 text-center text-slate-400">Loading invoices...</td></tr>
+                <tr><td colSpan={6} className="py-8 text-center text-zinc-500">Loading invoices...</td></tr>
               ) : invoices && invoices.length > 0 ? (
-                invoices.map((inv) => (
-                  <tr key={inv.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium border ${
-                        inv.status === 'EXTRACTED' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' : 
-                        inv.status === 'PENDING' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-                        'bg-slate-100 text-slate-700 border-slate-200'
-                      }`}>
-                        {inv.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 font-mono text-slate-700">{inv.id?.substring(0,8)}...</td>
-                    <td className="px-6 py-4 text-slate-600">{inv.vendorGstin}</td>
-                    <td className="px-6 py-4 text-slate-600">{new Date(inv.invoiceDate).toLocaleDateString()}</td>
-                    <td className="px-6 py-4 text-right font-medium text-slate-900">₹{inv.totalAmount.toLocaleString()}</td>
-                  </tr>
-                ))
+                invoices.map((inv) => {
+                  const sc = statusConfig[inv.status || 'PENDING'] || statusConfig.PENDING;
+                  const isExpanded = expandedRow === inv.id;
+                  return (
+                    <React.Fragment key={inv.id}>
+                      <tr
+                        className={`hover:bg-white/5 transition-colors cursor-pointer ${isExpanded ? 'bg-white/5' : ''}`}
+                        onClick={() => setExpandedRow(isExpanded ? null : (inv.id || null))}
+                      >
+                        <td className="px-6 py-4">
+                          <span className={`status-badge ${sc.bg} ${sc.text} ${sc.border}`}>
+                            {inv.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 font-mono text-zinc-500 text-xs">{inv.id?.substring(0,12)}...</td>
+                        <td className="px-6 py-4 text-zinc-200 font-medium">{inv.vendorGstin}</td>
+                        <td className="px-6 py-4 text-zinc-400">{new Date(inv.invoiceDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+                        <td className="px-6 py-4 text-right font-medium text-white tabular-nums">₹{parseFloat(inv.totalAmount.toString()).toLocaleString('en-IN')}</td>
+                        <td className="px-6 py-4 text-zinc-600">
+                          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                        </td>
+                      </tr>
+                      {isExpanded && inv.items && (
+                        <tr className="bg-black/20">
+                          <td colSpan={6} className="px-6 py-5 border-t border-white/5">
+                            <p className="text-xs text-zinc-500 font-semibold uppercase tracking-wider mb-3">Line Items</p>
+                            <div className="grid gap-2">
+                              {inv.items.map((item, idx) => (
+                                <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+                                  <div>
+                                    <p className="text-sm font-medium text-zinc-200">{item.description}</p>
+                                    <p className="text-xs text-zinc-500 mt-0.5">GST: {item.gstRate}%{item.hsnCode ? ` • HSN: ${item.hsnCode}` : ''}</p>
+                                  </div>
+                                  <span className="text-sm font-medium text-white tabular-nums">₹{parseFloat(item.amount.toString()).toLocaleString('en-IN')}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                })
               ) : (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-400">
-                    No invoices found. Try uploading one to get started.
+                  <td colSpan={6} className="py-16 text-center">
+                    <div className="flex flex-col items-center justify-center text-zinc-500">
+                      <UploadCloud className="w-8 h-8 text-zinc-600 mb-3" />
+                      <p className="text-sm">No invoices found. Upload one to get started.</p>
+                    </div>
                   </td>
                 </tr>
               )}
@@ -71,16 +110,11 @@ export const Invoices = () => {
         </div>
       </Card>
 
-      <AnimatePresence>
-        {isUploadModalOpen && (
-          <UploadModal onClose={() => setUploadModalOpen(false)} />
-        )}
-      </AnimatePresence>
+      {isUploadModalOpen && <UploadModal onClose={() => setUploadModalOpen(false)} />}
     </div>
   );
 };
 
-// Extracted Sub-component for clarity
 const UploadModal = ({ onClose }: { onClose: () => void }) => {
   const queryClient = useQueryClient();
   const [uploadState, setUploadState] = useState<'empty' | 'analyzing' | 'success'>('empty');
@@ -95,83 +129,67 @@ const UploadModal = ({ onClose }: { onClose: () => void }) => {
       const result = await finopsApi.extractInvoice(file);
       setExtractedData(result.data);
       setUploadState('success');
-      
-      // Invalidate query to trigger background refresh of the Invoices table
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
-    } catch (error) {
+    } catch {
       setUploadState('empty');
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-lg overflow-hidden flex flex-col"
-      >
-        <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-          <h3 className="font-semibold text-slate-800">Upload & Extract</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
+      <div className="bg-[#0f1115] rounded-3xl shadow-2xl border border-white/10 w-full max-w-lg overflow-hidden flex flex-col">
+        <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center">
+          <h3 className="font-medium text-white">Upload & Extract</h3>
+          <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors text-lg">&times;</button>
         </div>
         
-        <div className="p-6 relative min-h-[300px] flex flex-col justify-center">
+        <div className="p-8 relative min-h-[300px] flex flex-col justify-center">
           {uploadState === 'empty' && (
-             <div className="relative border-2 border-dashed border-slate-300 rounded-xl hover:bg-slate-50 hover:border-indigo-400 transition-all group overflow-hidden">
+             <div className="relative border border-dashed border-white/20 rounded-2xl hover:border-[#0099ff]/50 hover:bg-white/5 transition-colors group">
                 <input type="file" onChange={handleFileDrop} accept="image/*,application/pdf" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
-                <div className="flex flex-col items-center justify-center py-12 pointer-events-none">
-                  <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4 group-hover:bg-indigo-50 transition-colors">
-                    <UploadCloud className="w-8 h-8 text-slate-400 group-hover:text-indigo-500" />
+                <div className="flex flex-col items-center justify-center py-14 pointer-events-none">
+                  <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:bg-[#0099ff] transition-colors shadow-lg">
+                    <UploadCloud className="w-5 h-5 text-zinc-400 group-hover:text-white transition-colors" />
                   </div>
-                  <p className="font-medium text-slate-700">Drag & Drop Invoice</p>
-                  <p className="text-sm text-slate-500 mt-1">PDF or Image up to 5MB</p>
+                  <p className="font-medium text-white">Select Invoice File</p>
+                  <p className="text-sm text-zinc-500 mt-1">PDF or Image up to 5MB</p>
                 </div>
              </div>
           )}
 
           {uploadState === 'analyzing' && (
-             <div className="flex flex-col items-center justify-center gap-6 py-8">
-               <div className="relative">
-                 <motion.div
-                   animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.8, 0.3] }}
-                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                   className="absolute inset-0 bg-indigo-200 rounded-full blur-xl"
-                 />
-                 <div className="relative bg-white rounded-full p-4 shadow-lg border border-indigo-100 z-10">
-                   <RefreshCcw className="w-8 h-8 text-indigo-600 animate-spin" />
-                 </div>
-               </div>
+             <div className="flex flex-col items-center justify-center gap-6 py-10">
+               <RefreshCcw className="w-8 h-8 text-[#0099ff] animate-spin" />
                <div className="text-center">
-                 <p className="font-medium text-indigo-900">AI Analyzing Document...</p>
-                 <p className="text-sm text-indigo-500/80 mt-1">Extracting vendor & line items securely</p>
+                 <p className="font-medium text-white">Processing Document...</p>
+                 <p className="text-sm text-zinc-500 mt-1">Extracting structured data parameters</p>
                </div>
              </div>
           )}
 
           {uploadState === 'success' && extractedData && (
-             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-                <div className="bg-emerald-50 text-emerald-800 px-4 py-3 rounded-lg text-sm flex items-center gap-2 border border-emerald-200/60 shadow-sm">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+             <div className="space-y-5">
+                <div className="bg-emerald-500/10 text-emerald-400 px-4 py-3.5 rounded-2xl text-sm flex items-center gap-2 border border-emerald-500/20">
+                  <CheckCircle2 className="w-4 h-4" />
                   <span className="font-medium">Extraction Successful</span>
                 </div>
-                <div className="bg-slate-50 border border-slate-200 p-4 rounded-lg">
+                <div className="bg-white/5 border border-white/5 p-5 rounded-2xl">
                    <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Vendor GSTIN</p>
-                        <p className="font-mono text-slate-800 font-medium mt-1">{extractedData.vendorGstin}</p>
+                        <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider">Vendor GSTIN</p>
+                        <p className="font-mono text-white font-medium mt-1.5">{extractedData.vendorGstin}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Total Amount</p>
-                        <p className="text-slate-800 font-semibold mt-1">₹{extractedData.totalAmount}</p>
+                        <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider">Total Amount</p>
+                        <p className="text-white font-medium mt-1.5 tabular-nums">₹{extractedData.totalAmount}</p>
                       </div>
                    </div>
                 </div>
-                <Button onClick={onClose} className="w-full">Done</Button>
-             </motion.div>
+                <Button onClick={onClose} className="w-full mt-2">Done</Button>
+             </div>
           )}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
