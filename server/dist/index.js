@@ -26,7 +26,13 @@ app.use("/api/transactions", transactionRoutes_1.default);
 app.use("/api/invoices", invoiceRoutes_1.default);
 app.use("/api/reconcile", reconciliationRoutes_1.default);
 app.use("/api/auth", authRoutes_1.default);
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`FinOps-AI Backend running on port ${PORT}`);
+app.get("/", (req, res) => {
+    res.send("Hello Welcome to FinOps-AI");
 });
+const PORT = process.env.PORT || 3000;
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`FinOps-AI Backend running on port ${PORT}`);
+    });
+}
+exports.default = app;

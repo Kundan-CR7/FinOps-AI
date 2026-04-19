@@ -26,6 +26,9 @@ app.use("/api/transactions", transactionRoutes)
 app.use("/api/invoices", invoiceRoutes)
 app.use("/api/reconcile", reconciliationRoutes)
 app.use("/api/auth", authRoutes)
+app.get("/",(req,res) => {
+    res.send("Hello Welcome to FinOps-AI")
+})
 
 
 const PORT = process.env.PORT || 3000
