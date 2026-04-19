@@ -6,7 +6,7 @@ import invoiceRoutes from "./routes/invoiceRoutes"
 import reconciliationRoutes from "./routes/reconciliationRoutes"
 import authRoutes from "./routes/authRoutes"
 
-console.log("DB URL:", process.env.DATABASE_URL)
+
 const app = express()
 
 // Skip JSON body parsing for multipart requests so multer can read the stream
@@ -18,8 +18,8 @@ app.use((req, res, next) => {
 })
 
 app.use(cors({
-    origin: "http://localhost:5173",
-    methods: ["GET","POST"]
+    origin: process.env.FRONTEND_URL || "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
 }))
 
 app.use("/api/transactions", transactionRoutes)
