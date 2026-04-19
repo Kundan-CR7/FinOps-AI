@@ -29,6 +29,10 @@ app.use("/api/auth", authRoutes)
 
 
 const PORT = process.env.PORT || 3000
-app.listen(PORT, () => {
-    console.log(`FinOps-AI Backend running on port ${PORT}`)
-})
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`FinOps-AI Backend running on port ${PORT}`)
+    })
+}
+
+export default app
