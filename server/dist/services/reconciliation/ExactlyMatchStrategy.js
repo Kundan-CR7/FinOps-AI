@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExactMatchStrategy = void 0;
 class ExactMatchStrategy {
     findMatches(invoice, transactions) {
-        const isStatusValid = invoice.getStatus() === "VERIFIED" || invoice.getStatus() === "EXTRACTED";
-        if (!isStatusValid)
+        const blockedStatuses = ["PAID", "RECONCILED"];
+        if (blockedStatuses.includes(invoice.getStatus()))
             return null;
         for (const transaction of transactions) {
             if (transaction.getStatus() !== "PENDING")

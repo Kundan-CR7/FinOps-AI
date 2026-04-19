@@ -10,7 +10,6 @@ const transactionRoutes_1 = __importDefault(require("./routes/transactionRoutes"
 const invoiceRoutes_1 = __importDefault(require("./routes/invoiceRoutes"));
 const reconciliationRoutes_1 = __importDefault(require("./routes/reconciliationRoutes"));
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
-console.log("DB URL:", process.env.DATABASE_URL);
 const app = (0, express_1.default)();
 // Skip JSON body parsing for multipart requests so multer can read the stream
 app.use((req, res, next) => {
@@ -20,8 +19,8 @@ app.use((req, res, next) => {
     express_1.default.json()(req, res, next);
 });
 app.use((0, cors_1.default)({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"]
+    origin: process.env.FRONTEND_URL || "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
 }));
 app.use("/api/transactions", transactionRoutes_1.default);
 app.use("/api/invoices", invoiceRoutes_1.default);

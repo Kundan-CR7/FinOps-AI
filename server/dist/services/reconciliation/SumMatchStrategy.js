@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SumMatchStrategy = void 0;
 class SumMatchStrategy {
     findMatches(invoice, transactions) {
-        const isStatusValid = invoice.getStatus() === "VERIFIED" || invoice.getStatus() === "EXTRACTED";
-        if (!isStatusValid)
+        const blockedStatuses = ["PAID", "RECONCILED"];
+        if (blockedStatuses.includes(invoice.getStatus()))
             return null;
         // Only look at pending credits (ignoring debits which are outflows)
         const pendingCredits = transactions.filter(t => t.getStatus() === "PENDING" && t.getType() === "CREDIT");
@@ -17,13 +17,16 @@ class SumMatchStrategy {
     }
     findSubsetSum(transactions, target, index = 0, currentSubset = []) {
         // Base case: check if current subset sums to exactly the target
-        const currentSum = currentSubset.reduce((acc, curr) => acc + curr.getAmount(), 0);
+        // Use rounding to avoid floating-point drift from Decimal-to-Number conversion
+        const currentSum = Math.round(currentSubset.reduce((acc, curr) => acc + curr.getAmount(), 0) * 100) / 100;
+        const roundedTarget = Math.round(target * 100) / 100;
         // Allow a tiny margin of error for floating point precision
-        if (Math.abs(currentSum - target) < 0.01) {
+        // Only match non-empty subsets to avoid false positives on zero-amount edge cases
+        if (currentSubset.length > 0 && Math.abs(currentSum - roundedTarget) < 0.01) {
             return currentSubset;
         }
         // Optimization: if we've exceeded the target, no need to keep adding (assuming all positive amounts)
-        if (currentSum > target) {
+        if (currentSum > roundedTarget + 0.01) {
             return [];
         }
         // Exhausted array
