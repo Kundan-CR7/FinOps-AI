@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Building, FileText, Landmark, RefreshCcw, Settings, LayoutDashboard, LogOut } from 'lucide-react';
+import { FileText, Landmark, RefreshCcw, Settings, LayoutDashboard, LogOut } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { useAuthStore } from '../../store/authStore';
 
