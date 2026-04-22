@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
+import { Card, CardHeader, CardTitle } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { FileBarChart, Send, Download, Calendar, IndianRupee, CheckCircle2, AlertTriangle, FileText } from 'lucide-react';
 import { finopsApi } from '../services/finopsApi';

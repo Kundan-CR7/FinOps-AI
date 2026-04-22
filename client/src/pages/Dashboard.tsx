@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
-import { IndianRupee, FileText, Activity, TrendingUp, ArrowUpRight, ArrowDownRight, Clock } from 'lucide-react';
+import { FileText, Activity, Clock } from 'lucide-react';
 import { finopsApi } from '../services/finopsApi';
 
 export const Dashboard = () => {

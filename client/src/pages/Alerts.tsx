@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
+import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Bell, AlertTriangle, AlertCircle, Info, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { finopsApi } from '../services/finopsApi';
