@@ -19,14 +19,14 @@ export const BankFeeds = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-2xl font-semibold text-white tracking-tight">Bank Feeds</h1>
-          <p className="text-zinc-400 text-sm mt-1">Live statement ingestion and manual reconciliation overrides.</p>
+          <h1 className="text-3xl font-semibold text-text-primary tracking-tight">Bank Feeds</h1>
+          <p className="text-text-secondary text-sm mt-1">Live statement ingestion and manual reconciliation overrides.</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-full text-xs font-medium text-zinc-300 border border-white/5">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0099ff] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0099ff]"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
             Live Sync
           </div>
@@ -40,12 +40,12 @@ export const BankFeeds = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead>
-              <tr className="border-b border-white/5 bg-white/[0.02]">
-                <th className="px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">Description</th>
-                <th className="px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">Type</th>
-                <th className="px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider text-right">Amount</th>
+              <tr className="border-b border-white/[0.04] bg-white/[0.01]">
+                <th className="px-6 py-4 text-xs font-medium text-text-secondary uppercase tracking-wider">Date</th>
+                <th className="px-6 py-4 text-xs font-medium text-text-secondary uppercase tracking-wider">Description</th>
+                <th className="px-6 py-4 text-xs font-medium text-text-secondary uppercase tracking-wider">Type</th>
+                <th className="px-6 py-4 text-xs font-medium text-text-secondary uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-xs font-medium text-text-secondary uppercase tracking-wider text-right">Amount</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 bg-transparent">
@@ -64,8 +64,8 @@ export const BankFeeds = () => {
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] uppercase font-bold tracking-wider border flex-shrink-0 whitespace-nowrap w-max ${
                         txn.type === 'CREDIT' 
-                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
-                          : 'bg-white/5 text-zinc-300 border-white/10'
+                          ? 'bg-transparent text-emerald-400 border-white/10' 
+                          : 'bg-transparent text-zinc-300 border-white/10'
                       }`}>
                         {txn.type === 'CREDIT' ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
                         {txn.type}
@@ -74,10 +74,10 @@ export const BankFeeds = () => {
                     <td className="px-6 py-4">
                       <span className={`status-badge border ${
                         txn.status === 'MATCHED' || txn.status === 'RECONCILED'
-                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                          ? 'bg-transparent text-emerald-400 border-white/10'
                           : txn.status === 'FLAGGED'
-                          ? 'bg-rose-500/10 text-rose-400 border-rose-500/20'
-                          : 'bg-white/5 text-zinc-400 border-white/10'
+                          ? 'bg-transparent text-rose-400 border-white/10'
+                          : 'bg-transparent text-zinc-400 border-white/10'
                       }`}>
                         {txn.status || 'PENDING'}
                       </span>
@@ -141,11 +141,11 @@ const ManualEntryModal = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
-      <div className="bg-[#0f1115] rounded-3xl shadow-2xl w-full max-w-lg border border-white/10 flex flex-col max-h-[90vh]">
-        <div className="px-8 py-6 border-b border-white/5">
-          <h2 className="text-xl font-bold tracking-tight text-white">Add Transaction</h2>
-          <p className="text-sm text-zinc-400 mt-1">Inject a bank entry.</p>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+      <div className="bg-card rounded-2xl shadow-2xl w-full max-w-lg border border-white/[0.04] flex flex-col max-h-[90vh]">
+        <div className="px-8 py-6 border-b border-white/[0.04]">
+          <h2 className="text-xl font-bold tracking-tight text-text-primary">Add Transaction</h2>
+          <p className="text-sm text-text-secondary mt-1">Inject a bank entry.</p>
         </div>
         
         <div className="overflow-y-auto px-8 py-6">
@@ -194,7 +194,7 @@ const ManualEntryModal = ({ onClose }: { onClose: () => void }) => {
           </form>
         </div>
         
-        <div className="px-8 py-5 border-t border-white/5 flex gap-3 flex-row-reverse bg-white/[0.02]">
+        <div className="px-8 py-5 border-t border-white/[0.04] flex gap-3 flex-row-reverse bg-transparent rounded-b-2xl">
            <Button type="submit" form="manualEntryForm" isLoading={isSubmitting}>
              Add Transaction
            </Button>

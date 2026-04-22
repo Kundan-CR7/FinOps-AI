@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'finops-super-secret-key-123';
 
 export class AuthService {
   
-  static async register(email: string, password: string, role: string = 'ADMIN') {
+  static async register(email: string, password: string, role: string = 'USER') {
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       throw new Error('Email is already registered');

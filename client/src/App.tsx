@@ -8,6 +8,8 @@ import { Dashboard } from './pages/Dashboard';
 import { Invoices } from './pages/Invoices';
 import { BankFeeds } from './pages/BankFeeds';
 import { Reconciliation } from './pages/Reconciliation';
+import { Alerts } from './pages/Alerts';
+import { Reports } from './pages/Reports';
 import { Settings } from './pages/Settings';
 import { Welcome } from './pages/Welcome';
 import { Login } from './pages/Login';
@@ -35,6 +37,14 @@ const WelcomeGuard = () => {
   return <Welcome />;
 };
 
+const RoleGuard = ({ children, requiredRole }: { children: React.ReactNode, requiredRole: string }) => {
+  const user = useAuthStore((state) => state.user);
+  if (!user || user.role !== requiredRole) {
+    return <Navigate to="/" replace />;
+  }
+  return <>{children}</>;
+};
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -49,6 +59,8 @@ export default function App() {
             <Route path="invoices" element={<Invoices />} />
             <Route path="bank-feeds" element={<BankFeeds />} />
             <Route path="reconciliation" element={<Reconciliation />} />
+            <Route path="alerts" element={<RoleGuard requiredRole="ADMIN"><Alerts /></RoleGuard>} />
+            <Route path="reports" element={<RoleGuard requiredRole="ADMIN"><Reports /></RoleGuard>} />
             <Route path="settings" element={<Settings />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>

@@ -5,6 +5,9 @@ import transactionRoutes from "./routes/transactionRoutes"
 import invoiceRoutes from "./routes/invoiceRoutes"
 import reconciliationRoutes from "./routes/reconciliationRoutes"
 import authRoutes from "./routes/authRoutes"
+import taxRoutes from "./routes/taxRoutes"
+import alertRoutes from "./routes/alertRoutes"
+import reportRoutes from "./routes/reportRoutes"
 
 
 const app = express()
@@ -26,6 +29,9 @@ app.use("/api/transactions", transactionRoutes)
 app.use("/api/invoices", invoiceRoutes)
 app.use("/api/reconcile", reconciliationRoutes)
 app.use("/api/auth", authRoutes)
+app.use("/api/tax", taxRoutes)
+app.use("/api/alerts", alertRoutes)
+app.use("/api/reports", reportRoutes)
 app.get("/",(req,res) => {
     res.send("Hello Welcome to FinOps-AI")
 })

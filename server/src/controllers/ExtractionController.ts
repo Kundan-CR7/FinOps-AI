@@ -1,18 +1,22 @@
 import { Request,Response } from "express";
 import { DocumentExtractionService } from "../services/DocumentExtractionService";
 import { InvoiceService } from "../services/InvoiceService";
+import { ValidationService } from "../services/ValidationService";
 import { randomUUID } from "crypto";
 
 export class ExtractionController{
     private extractionService: DocumentExtractionService
     private invoiceService: InvoiceService
+    private validationService: ValidationService
 
     constructor(
         extractionService: DocumentExtractionService,
-        invoiceService: InvoiceService
+        invoiceService: InvoiceService,
+        validationService: ValidationService
     ){
         this.extractionService = extractionService
         this.invoiceService = invoiceService
+        this.validationService = validationService
     }
 
     public async extract(req: Request, res:Response): Promise<void>{
@@ -46,6 +50,14 @@ export class ExtractionController{
             // Persist securely to DB
             const savedInvoice = await this.invoiceService.processNewInvoice(payload);
 
+            // Run validation against TaxRule database (UC4: Validate Data)
+            const validationResult = await this.validationService.validateInvoice(savedInvoice);
+
+            // If validation flagged the invoice, persist the updated status
+            if (!validationResult.isValid) {
+                await this.invoiceService.saveInvoice(savedInvoice);
+            }
+
             res.status(200).json({
                 message: "Extraction and Save successful",
                 data: {
@@ -54,7 +66,8 @@ export class ExtractionController{
                     totalAmount: savedInvoice.getTotalAmount(),
                     status: savedInvoice.getStatus(),
                     invoiceDate: savedInvoice.getInvoiceDate()
-                }
+                },
+                validation: validationResult
             })
         }catch(error: any){
             res.status(500).json({error: String(error.message || error)})

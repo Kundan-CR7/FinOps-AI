@@ -9,6 +9,18 @@ export default {
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
+      colors: {
+        background: '#000000',
+        card: '#0A0A0A',
+        text: {
+          primary: '#FAFAFA',
+          secondary: '#888888',
+        },
+        accent: {
+          DEFAULT: '#3B82F6',
+          hover: '#2563EB',
+        }
+      },
       animation: {
         'shimmer': 'shimmer 2s infinite',
         'float': 'float 6s ease-in-out infinite',

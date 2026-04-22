@@ -5,6 +5,8 @@ import { InvoiceService } from "../services/InvoiceService";
 import { PrismaInvoiceRepository } from "../repositories/PrismaInvoiceRepository";
 import { DocumentExtractionService } from "../services/DocumentExtractionService";
 import { ExtractionController } from "../controllers/ExtractionController";
+import { ValidationService } from "../services/ValidationService";
+import { TaxRuleRepository } from "../repositories/TaxRuleRepository";
 import { requireAuth } from "../middleware/authMiddleware";
 
 const router = Router()
@@ -14,8 +16,10 @@ const invoiceRepo = new PrismaInvoiceRepository()
 const invoiceService = new InvoiceService(invoiceRepo)
 const invoiceController = new InvoiceController(invoiceService)
 
+const taxRuleRepo = new TaxRuleRepository()
+const validationService = new ValidationService(taxRuleRepo)
 const extractionService = new DocumentExtractionService()
-const extractionController = new ExtractionController(extractionService, invoiceService)
+const extractionController = new ExtractionController(extractionService, invoiceService, validationService)
 
 router.use(requireAuth);
 

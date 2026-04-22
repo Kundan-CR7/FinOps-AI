@@ -6,7 +6,7 @@
 
 @layer base {
   html, body {
-    @apply bg-black text-zinc-200 min-h-screen antialiased overflow-x-hidden;
+    @apply bg-background text-text-primary min-h-screen antialiased overflow-x-hidden;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
   #root {
@@ -32,14 +32,14 @@
 @layer components {
   /* Framer-style pill inputs */
   .input-dark {
-    @apply block w-full rounded-full border border-white/10 bg-white/5 px-6 py-3.5 text-zinc-100 placeholder-zinc-500 shadow-sm transition-all duration-300;
-    @apply focus:border-cyan-500/50 focus:outline-none focus:ring-4 focus:ring-cyan-500/10 focus:bg-white/10;
+    @apply block w-full rounded-xl border border-white/[0.08] bg-transparent px-4 py-3 text-text-primary placeholder-zinc-600 transition-all duration-200;
+    @apply focus:border-white/20 focus:outline-none focus:ring-0 focus:bg-white/[0.02];
     @apply sm:text-sm;
   }
 
   .select-dark {
-    @apply w-full rounded-full border border-white/10 bg-white/5 px-6 py-3.5 text-zinc-100 shadow-sm transition-all duration-300 appearance-none cursor-pointer;
-    @apply focus:border-cyan-500/50 focus:outline-none focus:ring-4 focus:ring-cyan-500/10;
+    @apply w-full rounded-xl border border-white/[0.08] bg-transparent px-4 py-3 text-text-primary transition-all duration-200 appearance-none cursor-pointer;
+    @apply focus:border-white/20 focus:outline-none focus:ring-0 focus:bg-white/[0.02];
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2371717a' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
     background-position: right 1rem center;
     background-repeat: no-repeat;

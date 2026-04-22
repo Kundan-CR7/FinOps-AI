@@ -6,105 +6,102 @@ An autonomous financial operations platform designed for SMEs. FinOps-AI uses AI
 
 ---
 
-## What It Does
+##  Core Features
 
-- **Invoice Extraction** — Upload invoice PDFs/images; Gemini AI parses vendor details, HSN codes, GST rates, and line items automatically
-- **Bank Feed Management** — Log and track CREDIT/DEBIT transactions with narration
-- **Autonomous Reconciliation** — Matches bank transactions against invoices using narration-based fuzzy lookup
-- **Anomaly Detection** — Flags high-risk discrepancies and unmatched entries
-- **Audit Logs** — Full trail of all financial actions per user
-- **Role-based Auth** — JWT-secured API with bcrypt password hashing
+- **Intelligence-First Data Entry** — Upload invoice PDFs/images; Google Gemini AI extracts vendor details, HSN codes, and line items with absolute precision.
+- **Unified Bank Feeds** — Manage multiple digital bank statements and track CREDIT/DEBIT flows in a single editorial dashboard.
+- **Autonomous Reconciliation** — A combinatorial matching engine that links bank transactions to invoices using narration-based fuzzy lookup and amount verification.
+- **Compliance & Auditing** — Real-time anomaly detection flags discrepancies, while a full audit log tracks every financial event.
+- **Tax-Ready Reporting** — (Admin Only) Generate GSTR-1 ready reports and simulate tax filings with a single click.
 
 ---
 
-## Tech Stack
+##  Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React 18, TypeScript, Vite, Tailwind CSS |
-| Backend | Node.js, Express 5, TypeScript |
-| Database | PostgreSQL (via Supabase) |
-| ORM | Prisma 7 |
-| AI | Google Gemini (`@google/generative-ai`) |
-| Auth | JWT + bcrypt |
-| Deployment | Vercel (client) · Render (server) |
+| **Frontend** | React 19, TypeScript, Vite, Tailwind CSS (Minimalist Monochrome) |
+| **Backend** | Node.js, Express 5, TypeScript |
+| **Database** | PostgreSQL (via Supabase / Prisma 7) |
+| **AI Engine** | Google Gemini (`@google/generative-ai`) |
+| **Auth** | JWT + bcrypt with Role-Based Access Control (RBAC) |
+| **Deployment** | Vercel (Frontend) · Render (Backend) |
 
 ---
 
-## Project Structure
+##  Usage Guide: The FinOps Workflow
+
+Follow this sequence to manage your financial operations through the platform:
+
+### 1. Onboarding
+- **Signup**: Create a new account. By default, all new registrations are assigned the `USER` role.
+- **Login**: High-security entry to your financial canvas.
+
+### 2. Intake (Invoices)
+- Navigate to the **Invoices** tab.
+- Upload a vendor invoice (PDF or Image). 
+- Wait for the AI to process the document. You will see line items, HSN codes, and GST calculated automatically.
+
+### 3. Verification (Bank Feeds)
+- Navigate to **Bank Feeds**.
+- Manually enter or "sync" bank transactions recorded in your statement.
+- Each transaction acts as a potential "match" for your recorded invoices.
+
+### 4. Intelligence (Reconciliation)
+- Go to the **Reconciliation** module.
+- Run the Matching Engine. The system will highlight transactions that perfectly match your invoices based on vendor names, dates, and amounts.
+- Resolve any manual mismatches to maintain a clean ledger.
+
+### 5. Compliance (Admin Only)
+- **Alerts**: Access the Alerts section to see high-severity anomalies cross-referenced by the AI.
+- **Reports**: Generate and "File" your tax returns. The system calculates GSTR-1 liabilities based on extracted invoice data.
+
+---
+
+
+---
+
+##  Project Structure
 
 ```
 FinOps-AI/
 ├── client/          # React frontend (Vite)
 ├── server/          # Express backend (TypeScript)
-└── diagrams/        # Architecture & design diagrams
+├── diagrams/        # Architecture & use case diagrams
+└── README.md        # This file
 ```
 
 ---
 
-## Running Locally
+##  Running Locally
 
 ### Prerequisites
-
 - Node.js 18+
-- PostgreSQL database (or a [Supabase](https://supabase.com) free tier project)
-- Google Gemini API key ([get one here](https://aistudio.google.com/app/apikey))
+- PostgreSQL database
+- Google Gemini API key ([Get one here](https://aistudio.google.com/app/apikey))
 
-### 1. Clone the repo
+### 1. Database & Environment Setup
+**Server (`/server`):**
+1. Create a `.env` file:
+   ```env
+   DATABASE_URL=postgresql://user:password@host:5432/dbname
+   JWT_SECRET=your_jwt_secret
+   GEMINI_API_KEY=your_gemini_api_key
+   FRONTEND_URL=http://localhost:5173
+   ```
+2. `npm install`
+3. `npx prisma migrate dev`
+4. `npm run dev` (Runs on `http://localhost:3000`)
 
-```bash
-git clone https://github.com/Kundan-CR7/FinOps-AI.git
-cd FinOps-AI
-```
-
-### 2. Set up the server
-
-```bash
-cd server
-```
-
-Create a `.env` file:
-
-```env
-DATABASE_URL=postgresql://user:password@host:5432/dbname
-JWT_SECRET=your_jwt_secret
-GEMINI_API_KEY=your_gemini_api_key
-FRONTEND_URL=http://localhost:5173
-```
-
-Install dependencies and run migrations:
-
-```bash
-npm install
-npx prisma migrate dev
-npm run dev
-```
-
-The server runs on `http://localhost:3000`.
-
-### 3. Set up the client
-
-```bash
-cd ../client
-```
-
-Create a `.env` file:
-
-```env
-VITE_API_BASE_URL=http://localhost:3000/api
-```
-
-Install and start:
-
-```bash
-npm install
-npm run dev
-```
-
-The client runs on `http://localhost:5173`.
+**Client (`/client`):**
+1. Create a `.env` file:
+   ```env
+   VITE_API_BASE_URL=http://localhost:3000/api
+   ```
+2. `npm install`
+3. `npm run dev` (Runs on `http://localhost:5173`)
 
 ---
 
-## Architecture
-
-Design diagrams (ER diagram, class diagram, sequence diagram, use case diagram) are in the [`/diagrams`](./diagrams/) folder.
+##  Architecture
+Design diagrams (ER, Class, Sequence, Use Case) are located in the [`/diagrams`](./diagrams/) folder.

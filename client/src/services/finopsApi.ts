@@ -1,5 +1,5 @@
 import { apiClient } from './apiClient';
-import type { Invoice, BankTransaction, BankStatement, ExtractionResponse, ReconciliationResponse } from '../types';
+import type { Invoice, BankTransaction, BankStatement, ExtractionResponse, ReconciliationResponse, AlertsResponse, TaxBreakdown, TaxRule, GSTR1Report, FilingResult } from '../types';
 
 export const finopsApi = {
   // Auth Integration
@@ -56,5 +56,44 @@ export const finopsApi = {
   addTransaction: async (payload: { amount: string | number, type: 'CREDIT' | 'DEBIT', transactionDate: string, description: string }) => {
     const { data } = await apiClient.post('/transactions/upload', payload);
     return data;
+  },
+
+  // Alerts (UC7)
+  getAlerts: async (): Promise<AlertsResponse> => {
+    const { data } = await apiClient.get('/alerts');
+    return data;
+  },
+
+  resolveAlert: async (alertId: string) => {
+    const { data } = await apiClient.patch(`/alerts/${alertId}/resolve`);
+    return data;
+  },
+
+  // Tax Engine (UC6)
+  getTaxBreakdown: async (invoiceId: string): Promise<TaxBreakdown> => {
+    const { data } = await apiClient.get(`/tax/calculate/${invoiceId}`);
+    return data;
+  },
+
+  getTaxRules: async (): Promise<TaxRule[]> => {
+    const { data } = await apiClient.get('/tax/rules');
+    return data;
+  },
+
+  createTaxRule: async (payload: { hsnCode: string; gstRate: number; ruleDescription: string; effectiveFrom: string }) => {
+    const { data } = await apiClient.post('/tax/rules', payload);
+    return data;
+  },
+
+  // Reports (UC8 + UC9)
+  generateGSTR1: async (periodStart: string, periodEnd: string): Promise<{ message: string; data: GSTR1Report }> => {
+    const { data } = await apiClient.post('/reports/gstr1', { periodStart, periodEnd });
+    return data;
+  },
+
+  fileReturn: async (report: GSTR1Report): Promise<{ message: string; data: FilingResult }> => {
+    const { data } = await apiClient.post('/reports/file', { report });
+    return data;
   }
 };
+

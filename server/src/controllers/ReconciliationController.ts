@@ -28,7 +28,7 @@ export class ReconciliationController {
             }
 
             // 2. Run the AI Logic using the narration bucket array.
-            const isMatched = await this.engine.reconcile(invoice, transactions)
+            const isMatched = await this.engine.reconcile(invoice, transactions, userId)
 
             // 3. Save the updated state of the Invoice 
             await this.invoiceRepo.save(invoice)

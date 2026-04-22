@@ -37,4 +37,8 @@ export class InvoiceService {
     public async getUserInvoices(userId: string): Promise<Invoice[]> {
         return await this.invoiceRepo.findByUser(userId)
     }
+
+    public async saveInvoice(invoice: Invoice): Promise<void> {
+        await this.invoiceRepo.save(invoice)
+    }
 }

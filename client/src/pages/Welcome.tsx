@@ -49,17 +49,20 @@ export const Welcome = () => {
   return (
     <div className="min-h-screen w-full font-sans overflow-y-auto overflow-x-hidden relative bg-transparent">
       
-      {/* Framer-Style Ambient Background Effects */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0" style={{ backgroundColor: '#020511' }}>
-        <div className="absolute top-0 right-0 w-[80vw] h-[80vw] rounded-full blur-[180px]" style={{ background: 'radial-gradient(circle, rgba(0,178,255,0.3) 0%, rgba(0,0,0,0) 70%)', transform: 'translate(30%, -20%)' }} />
-        <div className="absolute top-1/4 left-0 w-[90vw] h-[90vw] rounded-full blur-[180px]" style={{ background: 'radial-gradient(circle, rgba(0,25,120,0.5) 0%, rgba(0,0,0,0) 60%)', transform: 'translate(-40%, 10%)' }} />
-        <div className="absolute bottom-0 right-0 w-[50vw] h-[50vw] rounded-full blur-[140px]" style={{ background: 'radial-gradient(circle, rgba(0,178,255,0.2) 0%, rgba(0,0,0,0) 70%)', transform: 'translate(10%, 40%)' }} />
+      {/* Minimalist Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-black">
+        <div className="absolute top-0 right-0 w-[60vw] h-[60vw] rounded-full blur-[160px] opacity-[0.03]" style={{ background: 'white' }} />
+        <div className="absolute bottom-0 left-0 w-[40vw] h-[40vw] rounded-full blur-[140px] opacity-[0.02]" style={{ background: 'white' }} />
       </div>
 
       {/* Navbar Minimal & Working */}
       <nav className="w-full px-8 py-5 flex justify-between items-center relative z-50">
         <div className="flex items-center gap-3">
-          <Building className="text-[#00B2FF] w-6 h-6" />
+          <div className="w-5 h-5 flex flex-col justify-between">
+            <div className="w-full h-[4.5px] bg-text-primary rounded-r-full" />
+            <div className="w-2/3 h-[4.5px] bg-text-primary rounded-r-full opacity-50" />
+            <div className="w-full h-[4.5px] bg-text-primary rounded-r-full" />
+          </div>
           <span className="font-bold text-xl tracking-tight text-white mb-0.5">FinOps-AI</span>
         </div>
         <div className="flex items-center gap-8">
@@ -74,8 +77,8 @@ export const Welcome = () => {
             >
               Sign out
             </button>
-            <Button onClick={() => handleGetStarted()} className="h-9 px-5 text-sm font-semibold bg-[#00B2FF] text-white tracking-wide">
-              {user?.email ? 'Dashboard' : 'Sign up'}
+            <Button onClick={() => handleGetStarted()} className="h-9 px-5 text-xs font-semibold tracking-widest uppercase">
+              {user?.email ? 'Dashboard' : 'Get Started'}
             </Button>
           </div>
         </div>
@@ -84,43 +87,41 @@ export const Welcome = () => {
       <main className="flex flex-col items-center pt-24 pb-16 px-6 relative z-10">
         {/* Hero Section */}
         <div className="max-w-5xl w-full text-center">
-          <h1 className="text-6xl md:text-[5.5rem] leading-[1.02] font-bold tracking-[-0.04em] mb-6 text-white mx-auto">
-            Your financial<br/>canvas.
+          <h1 className="text-6xl md:text-[7rem] leading-[0.95] font-light tracking-tighter mb-8 text-white mx-auto">
+            The future of<br/>financial Ops.
           </h1>
-
-          <p className="text-[#a1a1aa] text-xl md:text-[22px] font-medium tracking-tight max-w-2xl mx-auto mb-14">
-            Automate invoice extraction, reconcile bank feeds, and maintain absolute financial accuracy with AI.
+          <p className="text-text-secondary text-lg md:text-xl font-medium tracking-tight max-w-xl mx-auto mb-16">
+            Automate extraction, reconciliation, and reporting with absolute precision and zero noise.
           </p>
 
-          <form onSubmit={handleGetStarted} className="group relative max-w-[560px] w-full mx-auto mb-32">
-            <div className="absolute -inset-1 bg-white/20 rounded-full blur-[8px] transition duration-1000 group-hover:bg-white/30" />
-            <div className="relative flex items-center bg-white rounded-full p-1.5 shadow-2xl">
+          <div className="group relative max-w-[500px] w-full mx-auto mb-32">
+            <div className="relative flex items-center bg-transparent border border-white/10 rounded-xl p-1.5 overflow-hidden">
               <div className="pl-6 pr-2 flex-grow h-12 flex items-center gap-3">
-                <Sparkles className="w-5 h-5 text-zinc-400" />
+                <Sparkles className="w-4 h-4 text-text-secondary" />
                 <input 
                    readOnly
                    type="text" 
                    value="Jump into your intelligent workspace..." 
-                   className="w-full bg-transparent border-none text-zinc-500 focus:outline-none focus:ring-0 placeholder-zinc-400 font-medium cursor-default"
+                   className="w-full bg-transparent border-none text-text-secondary focus:outline-none focus:ring-0 text-sm font-medium cursor-default"
                 />
               </div>
-              <Button type="button" onClick={() => handleGetStarted()} className="h-11 px-8 shrink-0 bg-[#00B2FF] hover:bg-[#009ce0] font-semibold text-white">
-                Get Started
+              <Button type="button" onClick={() => handleGetStarted()} className="h-11 px-8 rounded-lg text-xs uppercase tracking-widest font-bold">
+                Enter Dashboard
               </Button>
             </div>
-          </form>
+          </div>
         </div>
 
         {/* Feature Cards in Framer Aesthetic */}
         <section id="features" className="w-full max-w-5xl mx-auto mb-32">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {features.map((feature) => (
-              <div key={feature.title} className="bg-[#0f1115]/80 backdrop-blur-3xl rounded-3xl p-8 border border-white/5 transition-all hover:border-white/10">
-                <div className="w-12 h-12 rounded-2xl bg-[#00B2FF]/10 border border-[#00B2FF]/20 flex items-center justify-center mb-6">
-                  <feature.icon className="w-6 h-6 text-[#00B2FF]" />
+              <div key={feature.title} className="bg-card rounded-2xl p-8 border border-white/[0.04] transition-all hover:border-white/10">
+                <div className="w-10 h-10 rounded-xl border border-white/[0.04] flex items-center justify-center mb-6">
+                  <feature.icon className="w-4 h-4 text-text-secondary" />
                 </div>
-                <h3 className="font-semibold text-xl text-white mb-3 tracking-tight">{feature.title}</h3>
-                <p className="text-[15px] text-zinc-400 leading-relaxed font-medium tracking-tight">{feature.description}</p>
+                <h3 className="font-semibold text-lg text-text-primary mb-2 tracking-tight">{feature.title}</h3>
+                <p className="text-sm text-text-secondary leading-relaxed font-medium tracking-tight">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -141,8 +142,8 @@ export const Welcome = () => {
                     <Mail className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <p className="text-[15px] font-semibold tracking-tight text-white">Email Operations</p>
-                    <p className="text-[15px] text-[#00B2FF] font-medium tracking-tight mt-0.5">support@finops-ai.com</p>
+                    <p className="text-[14px] font-semibold tracking-tight text-white">Email Operations</p>
+                    <p className="text-[14px] text-text-secondary font-medium tracking-tight mt-0.5">support@finops-ai.com</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-5">
@@ -160,18 +161,18 @@ export const Welcome = () => {
             <div className="p-10 md:p-14 bg-white/[0.02]">
               <form onSubmit={handleContactSubmit} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-zinc-300 mb-2 tracking-tight">Full Name</label>
-                  <input required type="text" className="w-full rounded-2xl border border-white/10 bg-black/50 px-5 py-3 text-white placeholder-zinc-600 focus:border-[#00B2FF]/50 focus:outline-none focus:ring-4 focus:ring-[#00B2FF]/10 transition-all font-medium" placeholder="Jane Doe" />
+                  <label className="block text-[10px] uppercase font-bold tracking-widest text-text-secondary mb-2">Full Name</label>
+                  <input required type="text" className="input-dark rounded-xl" placeholder="Jane Doe" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-zinc-300 mb-2 tracking-tight">Email Address</label>
-                  <input required type="email" defaultValue={user?.email || ''} className="w-full rounded-2xl border border-white/10 bg-black/50 px-5 py-3 text-white placeholder-zinc-600 focus:border-[#00B2FF]/50 focus:outline-none focus:ring-4 focus:ring-[#00B2FF]/10 transition-all font-medium" placeholder="jane@company.com" />
+                  <label className="block text-[10px] uppercase font-bold tracking-widest text-text-secondary mb-2">Email Address</label>
+                  <input required type="email" defaultValue={user?.email || ''} className="input-dark rounded-xl" placeholder="jane@company.com" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-zinc-300 mb-2 tracking-tight">Message</label>
-                  <textarea required rows={4} className="w-full rounded-2xl border border-white/10 bg-black/50 px-5 py-3 text-white placeholder-zinc-600 focus:border-[#00B2FF]/50 focus:outline-none focus:ring-4 focus:ring-[#00B2FF]/10 transition-all resize-none font-medium" placeholder="How can we help?"></textarea>
+                  <label className="block text-[10px] uppercase font-bold tracking-widest text-text-secondary mb-2">Message</label>
+                  <textarea required rows={4} className="input-dark rounded-xl resize-none py-3" placeholder="How can we help?"></textarea>
                 </div>
-                <Button type="submit" className="w-full mt-2 rounded-2xl h-12 font-semibold text-[15px]" isLoading={isSubmitting}>
+                <Button type="submit" className="w-full mt-4 h-12 uppercase tracking-widest text-xs font-bold" isLoading={isSubmitting}>
                   Send Message
                 </Button>
               </form>

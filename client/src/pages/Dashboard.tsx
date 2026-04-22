@@ -15,6 +15,13 @@ export const Dashboard = () => {
   });
 
   const totalRevenue = invoices?.reduce((sum, inv) => sum + parseFloat(inv.totalAmount.toString()), 0) || 0;
+  const totalDebits = transactions?.filter(t => t.type === 'DEBIT').reduce((s, t) => s + parseFloat(t.amount.toString()), 0) || 0;
+  
+  // Calculate Tax Liability locally from invoice items
+  const taxLiability = invoices?.reduce((sum, inv) => {
+    return sum + inv.items.reduce((itemSum, item) => itemSum + (parseFloat(item.amount.toString()) * (item.gstRate / 100)), 0);
+  }, 0) || 0;
+
   const paidInvoices = invoices?.filter(i => i.status === 'PAID' || i.status === 'RECONCILED') || [];
   const pendingInvoices = invoices?.filter(i => i.status !== 'PAID' && i.status !== 'RECONCILED') || [];
   const flaggedInvoices = invoices?.filter(i => i.status === 'FLAGGED') || [];
@@ -22,46 +29,11 @@ export const Dashboard = () => {
     ? Math.round((paidInvoices.length / invoices.length) * 100)
     : 0;
 
-  const totalCredits = transactions?.filter(t => t.type === 'CREDIT').reduce((s, t) => s + parseFloat(t.amount.toString()), 0) || 0;
-  const totalDebits = transactions?.filter(t => t.type === 'DEBIT').reduce((s, t) => s + parseFloat(t.amount.toString()), 0) || 0;
-  const matchedTxns = transactions?.filter(t => t.status === 'MATCHED' || t.status === 'RECONCILED') || [];
-
   const isLoading = loadingInv || loadingTxn;
 
-  const stats = [
-    {
-      title: 'Total Invoice Value',
-      value: `₹${totalRevenue.toLocaleString('en-IN')}`,
-      subtitle: `${invoices?.length || 0} invoices tracked`,
-      icon: IndianRupee,
-      headerIconColor: 'text-[#0099ff]',
-      headerBg: 'bg-[#0099ff]/10 border-[#0099ff]/20'
-    },
-    {
-      title: 'Pending Invoices',
-      value: `${pendingInvoices.length}`,
-      subtitle: flaggedInvoices.length > 0 ? `${flaggedInvoices.length} flagged for review` : 'All clear',
-      icon: FileText,
-      headerIconColor: pendingInvoices.length > 0 ? 'text-rose-400' : 'text-zinc-500',
-      headerBg: pendingInvoices.length > 0 ? 'bg-rose-500/10 border-rose-500/20' : 'bg-white/5 border-white/5'
-    },
-    {
-      title: 'Reconciliation Rate',
-      value: `${reconRate}%`,
-      subtitle: `${paidInvoices.length} of ${invoices?.length || 0} matched`,
-      icon: Activity,
-      headerIconColor: reconRate >= 70 ? 'text-emerald-400' : reconRate >= 40 ? 'text-amber-400' : 'text-rose-400',
-      headerBg: reconRate >= 70 ? 'bg-emerald-500/10 border-emerald-500/20' : reconRate >= 40 ? 'bg-amber-500/10 border-amber-500/20' : 'bg-rose-500/10 border-rose-500/20'
-    },
-    {
-      title: 'Net Cash Flow',
-      value: `₹${(totalCredits - totalDebits).toLocaleString('en-IN')}`,
-      subtitle: `Credits: ₹${totalCredits.toLocaleString('en-IN')}`,
-      icon: TrendingUp,
-      headerIconColor: totalCredits >= totalDebits ? 'text-emerald-400' : 'text-rose-400',
-      headerBg: totalCredits >= totalDebits ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-rose-500/10 border-rose-500/20'
-    },
-  ];
+  // The Bento Grid structure as requested
+  // Income (2 cols), Expenses (1 col)
+  // Tax Liability (1 col), AI Insights (2 cols)
 
   const recentTransactions = (transactions || []).slice(0, 8);
 
@@ -72,141 +44,127 @@ export const Dashboard = () => {
         <p className="text-zinc-400 text-sm mt-1">Your financial operations at a glance</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        {stats.map((stat, i) => (
-          <Card key={i}>
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${stat.headerBg}`}>
-                  <stat.icon className={`h-4 w-4 ${stat.headerIconColor}`} />
-                </div>
-              </div>
-              <div className="text-2xl font-bold text-white mb-1 tracking-tight">
-                {isLoading ? <span className="text-zinc-600">—</span> : stat.value}
-              </div>
-              <p className="text-sm font-medium text-zinc-300">{stat.title}</p>
-              <p className="text-xs text-zinc-500 mt-1">{isLoading ? 'Loading...' : stat.subtitle}</p>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Total Income */}
+        <div className="flex flex-col justify-end pb-6 border-b border-white/[0.04] md:border-b-0 md:border-r md:pr-6">
+          <h2 className="text-[10px] font-semibold text-text-secondary uppercase tracking-[0.2em] mb-3">Total Income</h2>
+          <div className="flex items-baseline gap-2">
+            <span className="text-zinc-500 font-light text-2xl">₹</span>
+            <div className="text-5xl font-light text-text-primary tracking-tighter">
+              {isLoading ? <span className="opacity-50">...</span> : totalRevenue.toLocaleString('en-IN')}
+            </div>
+          </div>
+          <div className="mt-4 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span className="text-xs text-text-secondary">Across {invoices?.length || 0} tracked invoices</span>
+          </div>
+        </div>
+
+        {/* Expenses */}
+        <div className="flex flex-col justify-end pb-6 border-b border-white/[0.04] md:border-b-0 md:border-r md:pr-6 md:pl-6">
+          <h2 className="text-[10px] font-semibold text-text-secondary uppercase tracking-[0.2em] mb-3">Expenses</h2>
+          <div className="flex items-baseline gap-2">
+            <span className="text-zinc-500 font-light text-2xl">₹</span>
+            <div className="text-5xl font-light text-text-primary tracking-tighter">
+              {isLoading ? <span className="opacity-50">...</span> : totalDebits.toLocaleString('en-IN')}
+            </div>
+          </div>
+          <div className="mt-4 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+            <span className="text-xs text-text-secondary">Bank synced debits</span>
+          </div>
+        </div>
+
+        {/* Tax Liability */}
+        <div className="flex flex-col justify-end pb-6 md:pl-6">
+          <h2 className="text-[10px] font-semibold text-text-secondary uppercase tracking-[0.2em] mb-3">Est. Tax Liability</h2>
+          <div className="flex items-baseline gap-2">
+            <span className="text-zinc-500 font-light text-2xl">₹</span>
+            <div className="text-5xl font-light text-text-primary tracking-tighter">
+              {isLoading ? <span className="opacity-50">...</span> : taxLiability.toLocaleString('en-IN')}
+            </div>
+          </div>
+          <div className="mt-4 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+            <span className="text-xs text-text-secondary">Calculated from items</span>
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-2">
-          <Card className="h-full flex flex-col">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <TrendingUp className="w-4 h-4 text-zinc-500" />
-                Cash Flow Overview
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex-1 pt-6">
-              {isLoading ? (
-                <div className="flex items-center justify-center h-full text-zinc-500 text-sm">Loading data...</div>
-              ) : transactions && transactions.length > 0 ? (
-                <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* AI & Recon */}
+        <Card className="lg:col-span-2">
+          <CardHeader className="border-b border-white/[0.04]">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+               <Activity className="w-4 h-4 text-text-secondary" /> Reconciliation Engine
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/[0.04]">
+              <div className="p-8">
+                <div className="text-[10px] font-semibold text-text-secondary uppercase tracking-[0.2em] mb-6">Match Rate</div>
+                <div className="flex items-end gap-3 mb-4">
+                  <span className="text-4xl font-light text-text-primary tracking-tighter">
+                    {isLoading ? '...' : reconRate}<span className="text-2xl text-zinc-500">%</span>
+                  </span>
+                </div>
+                <div className="w-full h-1 bg-white/[0.04] rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-text-primary rounded-full transition-all duration-1000"
+                    style={{ width: `${reconRate}%` }} 
+                  />
+                </div>
+                <p className="text-xs text-text-secondary mt-4">
+                  {isLoading ? 'Loading...' : `${paidInvoices.length} of ${invoices?.length || 0} successfully reconciled`}
+                </p>
+              </div>
+
+              <div className="p-8 flex flex-col justify-center space-y-6">
+                <div className="flex items-center justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <ArrowUpRight className="w-3.5 h-3.5 text-emerald-400" />
-                        <span className="text-sm text-zinc-300">Total Credits</span>
-                      </div>
-                      <span className="text-sm font-medium text-white">₹{totalCredits.toLocaleString('en-IN')}</span>
-                    </div>
-                    <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                      <div 
-                        style={{ width: `${totalCredits + totalDebits > 0 ? (totalCredits / (totalCredits + totalDebits)) * 100 : 0}%` }}
-                        className="h-full bg-emerald-500 rounded-full transition-all duration-1000"
-                      />
-                    </div>
+                    <div className="text-text-primary font-medium">{pendingInvoices.length}</div>
+                    <div className="text-xs text-text-secondary mt-0.5">Pending Invoices</div>
                   </div>
-
+                  <FileText className="w-4 h-4 text-zinc-600" />
+                </div>
+                <div className="flex items-center justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <ArrowDownRight className="w-3.5 h-3.5 text-rose-500" />
-                        <span className="text-sm text-zinc-300">Total Debits</span>
-                      </div>
-                      <span className="text-sm font-medium text-white">₹{totalDebits.toLocaleString('en-IN')}</span>
-                    </div>
-                    <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                      <div 
-                        style={{ width: `${totalCredits + totalDebits > 0 ? (totalDebits / (totalCredits + totalDebits)) * 100 : 0}%` }}
-                        className="h-full bg-rose-500 rounded-full transition-all duration-1000"
-                      />
-                    </div>
+                    <div className="text-rose-400 font-medium">{flaggedInvoices.length}</div>
+                    <div className="text-xs text-text-secondary mt-0.5">Anomalies Detected</div>
                   </div>
-
-                  <div className="mt-4 p-4 rounded-xl bg-white/5 border border-white/5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-zinc-400">Transactions Matched</span>
-                      <span className="text-sm font-medium text-white">{matchedTxns.length} / {transactions.length}</span>
-                    </div>
-                  </div>
+                  <Activity className="w-4 h-4 text-rose-500/50" />
                 </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full text-zinc-500 text-sm gap-2 mt-8">
-                  <TrendingUp className="w-8 h-8 text-zinc-700 mb-2" />
-                  <p>No transactions available</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="lg:col-span-3">
-          <Card className="h-full flex flex-col p-0">
-            <CardHeader className="px-6 py-5">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Clock className="w-4 h-4 text-zinc-500" />
-                Recent Bank Activity
-              </CardTitle>
-            </CardHeader>
-            <div className="flex-1 overflow-y-auto">
-              {isLoading ? (
-                <div className="p-6 text-center text-zinc-500 text-sm">Loading activity...</div>
-              ) : recentTransactions.length > 0 ? (
-                <div className="divide-y divide-white/5">
-                  {recentTransactions.map((txn) => (
-                    <div key={txn.id} className="flex items-center justify-between p-4 px-6 hover:bg-white/5 transition-colors">
-                      <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div className={`w-9 h-9 rounded-[10px] border flex items-center justify-center flex-shrink-0 ${
-                          txn.type === 'CREDIT' ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-white/5 border-white/10'
-                        }`}>
-                          {txn.type === 'CREDIT'
-                            ? <ArrowUpRight className="w-4 h-4 text-emerald-400" />
-                            : <ArrowDownRight className="w-4 h-4 text-zinc-500" />
-                          }
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-zinc-200 truncate">{txn.description}</p>
-                          <p className="text-xs text-zinc-500">{new Date(txn.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</p>
-                        </div>
-                      </div>
-                      <div className="text-right flex-shrink-0 ml-4">
-                        <p className={`text-sm font-medium tabular-nums tracking-tight ${txn.type === 'CREDIT' ? 'text-emerald-400' : 'text-zinc-300'}`}>
-                          {txn.type === 'CREDIT' ? '+' : '-'}₹{parseFloat(txn.amount.toString()).toLocaleString('en-IN')}
-                        </p>
-                        {txn.status && txn.status !== 'PENDING' && (
-                          <span className={`text-[10px] font-bold tracking-wider uppercase mt-1 inline-block ${
-                            txn.status === 'MATCHED' || txn.status === 'RECONCILED' ? 'text-emerald-500' : 'text-amber-500'
-                          }`}>
-                            {txn.status}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full text-zinc-500 text-sm gap-2 py-12">
-                  <Clock className="w-8 h-8 text-zinc-700 mb-2" />
-                  <p>No recent activity</p>
-                </div>
-              )}
+              </div>
             </div>
-          </Card>
-        </div>
+          </CardContent>
+        </Card>
+
+        {/* Small Recent List */}
+        <Card className="lg:col-span-1">
+          <CardHeader className="border-b border-white/[0.04]">
+             <CardTitle className="text-sm font-medium flex items-center gap-2">
+               <Clock className="w-4 h-4 text-text-secondary" /> Live Feed
+             </CardTitle>
+          </CardHeader>
+          <div className="divide-y divide-white/[0.04] max-h-[300px] overflow-y-auto">
+             {recentTransactions.map((txn) => (
+                <div key={txn.id} className="p-4 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
+                  <div className="min-w-0 pr-4">
+                    <p className="text-sm text-text-primary font-medium truncate">{txn.description}</p>
+                    <p className="text-xs text-text-secondary mt-0.5">{new Date(txn.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}</p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <span className={`text-sm tracking-tight ${txn.type === 'CREDIT' ? 'text-text-primary' : 'text-text-secondary'}`}>
+                      {txn.type === 'CREDIT' ? '+' : '-'}₹{parseFloat(txn.amount.toString()).toLocaleString('en-IN')}
+                    </span>
+                  </div>
+                </div>
+             ))}
+             {recentTransactions.length === 0 && !isLoading && (
+               <div className="p-8 text-center text-xs text-text-secondary">No recent transactions</div>
+             )}
+          </div>
+        </Card>
       </div>
     </div>
   );

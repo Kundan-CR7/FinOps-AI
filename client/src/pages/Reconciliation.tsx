@@ -65,17 +65,17 @@ export const Reconciliation = () => {
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       <div>
-        <h1 className="text-2xl font-semibold text-white tracking-tight flex items-center gap-2">
-          <RefreshCcw className="w-5 h-5 text-[#0099ff]" />
+        <h1 className="text-3xl font-semibold text-text-primary tracking-tight flex items-center gap-2">
+          <RefreshCcw className="w-5 h-5 text-text-secondary" />
           Reconciliation Engine
         </h1>
-        <p className="text-zinc-400 text-sm mt-1">Map a target invoice against a narration tag group to auto-reconcile subsets.</p>
+        <p className="text-text-secondary text-sm mt-1">Map a target invoice against a narration tag group to auto-reconcile subsets.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
          <Card className="p-8">
-           <h3 className="text-sm font-medium text-zinc-300 mb-4 flex items-center gap-2 border-b border-white/10 pb-4">
-             <FileText className="w-4 h-4 text-zinc-500" /> Target Invoice
+           <h3 className="text-sm font-medium text-text-secondary mb-4 flex items-center gap-2 border-b border-white/[0.04] pb-4">
+             <FileText className="w-4 h-4 text-text-secondary" /> Target Invoice
            </h3>
            <div className="mt-4">
              {isLoadingInvoices ? (
@@ -96,9 +96,9 @@ export const Reconciliation = () => {
                    ))}
                  </select>
                  {selectedInvoice && (
-                   <div className="mt-4 bg-white/5 p-4 rounded-xl border border-white/5 text-sm flex justify-between items-center">
-                     <span className="text-zinc-400">Status</span>
-                     <span className={selectedInvoice.status === 'FLAGGED' ? 'text-rose-400 font-medium' : 'text-white font-medium'}>{selectedInvoice.status}</span>
+                   <div className="mt-4 bg-white/[0.02] p-4 rounded-xl border border-white/[0.04] text-sm flex justify-between items-center">
+                     <span className="text-text-secondary">Status</span>
+                     <span className={selectedInvoice.status === 'FLAGGED' ? 'text-rose-400 font-medium' : 'text-text-primary font-medium'}>{selectedInvoice.status}</span>
                    </div>
                  )}
                </>
@@ -109,8 +109,8 @@ export const Reconciliation = () => {
          </Card>
 
          <Card className="p-8">
-           <h3 className="text-sm font-medium text-zinc-300 mb-4 flex items-center gap-2 border-b border-white/10 pb-4">
-             <TextSelect className="w-4 h-4 text-zinc-500" /> Remittance Tag
+           <h3 className="text-sm font-medium text-text-secondary mb-4 flex items-center gap-2 border-b border-white/[0.04] pb-4">
+             <TextSelect className="w-4 h-4 text-text-secondary" /> Remittance Tag
            </h3>
            <div className="mt-4">
              {isLoadingTransactions ? (
@@ -129,9 +129,9 @@ export const Reconciliation = () => {
                    ))}
                  </select>
                  {selectedNarration && (
-                   <div className="mt-4 bg-white/5 p-4 rounded-xl border border-white/5 text-sm flex justify-between items-center">
-                     <span className="text-zinc-400">Available Credits</span>
-                     <span className="text-[#0099ff] font-medium">{narrationTransactions.length} pending</span>
+                   <div className="mt-4 bg-white/[0.02] p-4 rounded-xl border border-white/[0.04] text-sm flex justify-between items-center">
+                     <span className="text-text-secondary">Available Credits</span>
+                      <span className="text-text-primary font-medium">{narrationTransactions.length} pending</span>
                    </div>
                  )}
                </>
@@ -142,7 +142,7 @@ export const Reconciliation = () => {
          </Card>
       </div>
 
-      <Card className="min-h-[280px] flex items-center justify-center p-8 bg-[#0a0d14] border-t-2 border-t-[#0099ff]/50">
+      <Card className="min-h-[280px] flex items-center justify-center p-8 bg-card border-t border-t-white/[0.04]">
         {reconState === 'idle' && (
           <div className="text-center max-w-sm w-full py-8">
             <Button
@@ -152,7 +152,7 @@ export const Reconciliation = () => {
             >
               <RefreshCcw className="w-4 h-4 mr-2" /> Execute Combinations
             </Button>
-            <p className="text-xs text-zinc-500 font-medium">
+            <p className="text-xs text-text-secondary font-medium">
               Maps un-reconciled target float against the invoice amount target.
             </p>
           </div>
@@ -160,26 +160,26 @@ export const Reconciliation = () => {
 
         {reconState === 'running' && (
           <div className="text-center">
-            <RefreshCcw className="w-10 h-10 text-[#0099ff] animate-spin mx-auto mb-5" />
-            <h3 className="text-lg font-semibold text-white tracking-tight">Reconciling Database...</h3>
-            <p className="text-sm text-zinc-400 mt-2">Testing float distributions.</p>
+            <RefreshCcw className="w-10 h-10 text-text-primary animate-spin mx-auto mb-5" />
+            <h3 className="text-lg font-semibold text-text-primary tracking-tight">Reconciling Database...</h3>
+            <p className="text-sm text-text-secondary mt-2">Testing float distributions.</p>
           </div>
         )}
 
         {reconState === 'success' && (
-            <div className="w-full bg-emerald-500/10 border border-emerald-500/20 rounded-3xl p-8 flex flex-col md:flex-row gap-8 items-center shadow-[inset_0_0_50px_rgba(16,185,129,0.05)]">
-              <div className="w-16 h-16 bg-emerald-500/20 rounded-2xl flex items-center justify-center shrink-0">
-                <CheckCircle2 className="w-8 h-8 text-emerald-500" />
+            <div className="w-full border border-white/[0.04] rounded-xl p-8 flex flex-col md:flex-row gap-8 items-center">
+              <div className="w-14 h-14 rounded-xl border border-white/[0.04] flex items-center justify-center shrink-0">
+                <CheckCircle2 className="w-6 h-6 text-emerald-400" />
               </div>
               <div className="flex-1 w-full text-center md:text-left">
-                <h4 className="text-emerald-400 font-bold tracking-tight text-2xl mb-2 flex flex-col md:flex-row items-center gap-3">
+                <h4 className="text-text-primary font-semibold tracking-tight text-xl mb-2 flex flex-col md:flex-row items-center gap-3">
                   Match Successful
-                  <span className="text-[11px] uppercase font-bold tracking-wider bg-emerald-500/20 px-2.5 py-1 rounded-full text-emerald-400">Verified</span>
+                  <span className="text-[10px] uppercase font-semibold tracking-widest border border-emerald-500/20 px-2.5 py-1 rounded-full text-emerald-400">Verified</span>
                 </h4>
-                <p className="text-zinc-300 text-sm mb-6 max-w-md mx-auto md:mx-0">
-                  Total floats successfully balance against invoice target <span className="font-semibold text-white">₹{expectedAmount.toLocaleString('en-IN')}</span>
+                <p className="text-text-secondary text-sm mb-6 max-w-md mx-auto md:mx-0">
+                  Total floats successfully balance against invoice target <span className="font-medium text-text-primary">₹{expectedAmount.toLocaleString('en-IN')}</span>
                 </p>
-                <Button onClick={resetEngine} variant="outline" className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10">
+                <Button onClick={resetEngine} variant="outline">
                   Acknowledge
                 </Button>
               </div>
@@ -187,19 +187,19 @@ export const Reconciliation = () => {
         )}
 
         {reconState === 'anomaly' && (
-            <div className="w-full bg-rose-500/10 border border-rose-500/20 rounded-3xl p-8 flex flex-col md:flex-row gap-8 items-center shadow-[inset_0_0_50px_rgba(244,63,94,0.05)]">
-              <div className="w-16 h-16 bg-rose-500/20 rounded-2xl flex items-center justify-center shrink-0">
-                <AlertTriangle className="w-8 h-8 text-rose-500" />
+            <div className="w-full border border-white/[0.04] rounded-xl p-8 flex flex-col md:flex-row gap-8 items-center">
+              <div className="w-14 h-14 rounded-xl border border-white/[0.04] flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-6 h-6 text-rose-400" />
               </div>
               <div className="flex-1 w-full text-center md:text-left">
-                <h4 className="text-rose-400 font-bold tracking-tight text-2xl mb-2 flex flex-col md:flex-row items-center gap-3">
+                <h4 className="text-text-primary font-semibold tracking-tight text-xl mb-2 flex flex-col md:flex-row items-center gap-3">
                   Match Failed
-                  <span className="text-[11px] uppercase font-bold tracking-wider bg-rose-500/20 px-2.5 py-1 rounded-full text-rose-400">Anomaly</span>
+                  <span className="text-[10px] uppercase font-semibold tracking-widest border border-rose-500/20 px-2.5 py-1 rounded-full text-rose-400">Anomaly</span>
                 </h4>
-                <p className="text-zinc-300 text-sm mb-6 max-w-md mx-auto md:mx-0 leading-relaxed">
-                  Invoice value <span className="text-white font-medium">₹{expectedAmount.toLocaleString('en-IN')}</span> could not be satisfied. Available tagged sum: <span className="text-white font-medium">₹{narrationBucketAmount.toLocaleString('en-IN')}</span>.
+                <p className="text-text-secondary text-sm mb-6 max-w-md mx-auto md:mx-0 leading-relaxed">
+                  Invoice value <span className="text-text-primary font-medium">₹{expectedAmount.toLocaleString('en-IN')}</span> could not be satisfied. Available tagged sum: <span className="text-text-primary font-medium">₹{narrationBucketAmount.toLocaleString('en-IN')}</span>.
                 </p>
-                <Button onClick={resetEngine} variant="outline" className="border-rose-500/30 text-rose-400 hover:bg-rose-500/10">
+                <Button onClick={resetEngine} variant="outline">
                   Clear & Return
                 </Button>
               </div>

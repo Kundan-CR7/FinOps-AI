@@ -6,12 +6,12 @@ import { Button } from '../components/ui/Button';
 import { UploadCloud, CheckCircle2, RefreshCcw, ChevronDown, ChevronUp } from 'lucide-react';
 
 const statusConfig: Record<string, { bg: string; text: string; border: string }> = {
-  EXTRACTED: { bg: 'bg-[#0099ff]/10', text: 'text-[#0099ff]', border: 'border-[#0099ff]/20' },
-  PENDING: { bg: 'bg-white/5', text: 'text-zinc-400', border: 'border-white/10' },
-  VERIFIED: { bg: 'bg-cyan-500/10', text: 'text-cyan-400', border: 'border-cyan-500/20' },
-  FLAGGED: { bg: 'bg-rose-500/10', text: 'text-rose-400', border: 'border-rose-500/20' },
-  PAID: { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/20' },
-  RECONCILED: { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/20' },
+  EXTRACTED: { bg: 'bg-transparent', text: 'text-text-primary', border: 'border-white/20' },
+  PENDING: { bg: 'bg-transparent', text: 'text-text-secondary', border: 'border-white/10' },
+  VERIFIED: { bg: 'bg-transparent', text: 'text-cyan-400', border: 'border-cyan-500/20' },
+  FLAGGED: { bg: 'bg-transparent', text: 'text-rose-400', border: 'border-rose-500/20' },
+  PAID: { bg: 'bg-transparent', text: 'text-emerald-400', border: 'border-emerald-500/20' },
+  RECONCILED: { bg: 'bg-transparent', text: 'text-emerald-400', border: 'border-emerald-500/20' },
 };
 
 export const Invoices = () => {
@@ -27,8 +27,8 @@ export const Invoices = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-2xl font-semibold text-white tracking-tight">Invoices</h1>
-          <p className="text-zinc-400 text-sm mt-1">Manage and extract data from vendor bills.</p>
+          <h1 className="text-3xl font-semibold text-text-primary tracking-tight">Invoices</h1>
+          <p className="text-text-secondary text-sm mt-1">Manage and extract data from vendor bills.</p>
         </div>
         <Button onClick={() => setUploadModalOpen(true)} className="gap-2 shrink-0 border-white/10" variant="outline">
           <UploadCloud className="w-4 h-4" /> AI Upload Invoice
@@ -39,12 +39,12 @@ export const Invoices = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead>
-              <tr className="border-b border-white/5 bg-white/[0.02]">
-                <th className="px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">Invoice ID</th>
-                <th className="px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">Vendor GSTIN</th>
-                <th className="px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider text-right">Amount</th>
+              <tr className="border-b border-white/[0.04] bg-white/[0.01]">
+                <th className="px-6 py-4 text-xs font-medium text-text-secondary uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-xs font-medium text-text-secondary uppercase tracking-wider">Invoice ID</th>
+                <th className="px-6 py-4 text-xs font-medium text-text-secondary uppercase tracking-wider">Vendor GSTIN</th>
+                <th className="px-6 py-4 text-xs font-medium text-text-secondary uppercase tracking-wider">Date</th>
+                <th className="px-6 py-4 text-xs font-medium text-text-secondary uppercase tracking-wider text-right">Amount</th>
                 <th className="px-6 py-4 w-12"></th>
               </tr>
             </thead>
@@ -136,44 +136,44 @@ const UploadModal = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
-      <div className="bg-[#0f1115] rounded-3xl shadow-2xl border border-white/10 w-full max-w-lg overflow-hidden flex flex-col">
-        <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center">
-          <h3 className="font-medium text-white">Upload & Extract</h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+      <div className="bg-card rounded-2xl shadow-2xl border border-white/[0.04] w-full max-w-lg overflow-hidden flex flex-col">
+        <div className="px-6 py-4 border-b border-white/[0.04] flex justify-between items-center">
+          <h3 className="font-medium text-text-primary text-lg">Upload & Extract</h3>
           <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors text-lg">&times;</button>
         </div>
         
         <div className="p-8 relative min-h-[300px] flex flex-col justify-center">
           {uploadState === 'empty' && (
-             <div className="relative border border-dashed border-white/20 rounded-2xl hover:border-[#0099ff]/50 hover:bg-white/5 transition-colors group">
+             <div className="relative border border-dashed border-white/10 rounded-xl hover:border-white/30 hover:bg-white/[0.02] transition-colors group">
                 <input type="file" onChange={handleFileDrop} accept="image/*,application/pdf" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
                 <div className="flex flex-col items-center justify-center py-14 pointer-events-none">
-                  <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:bg-[#0099ff] transition-colors shadow-lg">
-                    <UploadCloud className="w-5 h-5 text-zinc-400 group-hover:text-white transition-colors" />
+                  <div className="w-12 h-12 rounded-full bg-white/[0.02] flex items-center justify-center mb-4 border border-white/5 transition-colors shadow-sm text-text-secondary">
+                    <UploadCloud className="w-5 h-5 group-hover:text-text-primary transition-colors" />
                   </div>
-                  <p className="font-medium text-white">Select Invoice File</p>
-                  <p className="text-sm text-zinc-500 mt-1">PDF or Image up to 5MB</p>
+                  <p className="font-medium text-text-primary">Select Invoice File</p>
+                  <p className="text-sm text-text-secondary mt-1">PDF or Image up to 5MB</p>
                 </div>
              </div>
           )}
 
           {uploadState === 'analyzing' && (
              <div className="flex flex-col items-center justify-center gap-6 py-10">
-               <RefreshCcw className="w-8 h-8 text-[#0099ff] animate-spin" />
+               <RefreshCcw className="w-8 h-8 text-accent animate-spin" />
                <div className="text-center">
-                 <p className="font-medium text-white">Processing Document...</p>
-                 <p className="text-sm text-zinc-500 mt-1">Extracting structured data parameters</p>
+                 <p className="font-medium text-text-primary">Processing Document...</p>
+                 <p className="text-sm text-text-secondary mt-1">Extracting structured data parameters</p>
                </div>
              </div>
           )}
 
           {uploadState === 'success' && extractedData && (
              <div className="space-y-5">
-                <div className="bg-emerald-500/10 text-emerald-400 px-4 py-3.5 rounded-2xl text-sm flex items-center gap-2 border border-emerald-500/20">
-                  <CheckCircle2 className="w-4 h-4" />
+                <div className="bg-transparent text-text-primary px-4 py-3.5 rounded-xl text-sm flex items-center gap-2 border border-white/10">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                   <span className="font-medium">Extraction Successful</span>
                 </div>
-                <div className="bg-white/5 border border-white/5 p-5 rounded-2xl">
+                <div className="bg-transparent border border-white/10 p-5 rounded-xl">
                    <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider">Vendor GSTIN</p>

@@ -39,22 +39,19 @@ export const Signup = () => {
 
   return (
     <div className="min-h-screen bg-black flex flex-col justify-center py-12 px-6 lg:px-8 relative overflow-hidden">
-      
-      {/* Framer Ambient Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/15 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 flex flex-col items-center">
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0099ff] to-cyan-400 flex items-center justify-center shadow-[0_0_20px_rgba(0,153,255,0.3)] mb-6">
-          <Building className="text-white w-6 h-6" />
+        <div className="w-12 h-12 rounded-xl border border-white/[0.04] flex items-center justify-center mb-6">
+          <Building className="text-text-primary w-6 h-6" />
         </div>
-        <h2 className="text-center text-3xl font-bold tracking-tight text-white">Create your account</h2>
-        <p className="mt-2 text-center text-zinc-400 font-medium">
-          Already have an account? <Link to="/login" className="text-[#0099ff] hover:text-white transition-colors">Sign in here</Link>
+        <h2 className="text-center text-3xl font-bold tracking-tight text-text-primary">Create your account</h2>
+        <p className="mt-2 text-center text-text-secondary font-medium">
+          Already have an account? <Link to="/login" className="text-text-primary hover:underline transition-colors focus:outline-none">Sign in</Link>
         </p>
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[420px] relative z-10">
-        <div className="bg-[#0f1115]/80 backdrop-blur-3xl py-10 px-8 shadow-2xl sm:rounded-3xl border border-white/5">
+        <div className="bg-card py-10 px-8 shadow-2xl sm:rounded-2xl border border-white/[0.04]">
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label className="block text-sm font-medium text-zinc-300 mb-2">Email address</label>
